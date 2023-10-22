@@ -26,3 +26,9 @@ Instead of modelling the cheese and sauce seperately, i decided to just use the 
 
 # Materials and Colouring
 I applied a basic dough texture to the pizza base and then used the texture paint feature to make sure it appeared in the right places. I then used a sauce and cheese image to cover the splat shape I created and finally added pepperoni image texture to the pepperoni. 
+
+# Onions
+I created some onions by using a cylinder then cutting out another cylinder leaving me with an onion slice, i then duplicated this and used the booleam modifier to connect them all. I added an onion image as the texture but it didn't look great. So, I used the texture panel to make it more glossey, I then unwrapped the entire shape and used the onion image to get the right colours. I then painted these colours on the correct sections to make some pretty lovely onions
+
+# Pizza Box
+I made a simple pizza box and added a cardboard image as the texture.
