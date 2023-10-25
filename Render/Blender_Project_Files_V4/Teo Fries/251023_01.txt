@@ -1,0 +1,3 @@
+## 241023_02
+It took a while for me to figure out how to use textures properly and the pipeline for materials and what Blender uses. I realised that textures are actually just PNG images, thus are considered seperate from other files in Blender and need to be saved seperately. I also messed about with the shader nodes (shown in the screenshot below) as I tried to experiment with adding a transparent logo on to the box in my model. I realised pretty quickly that there were issues with transparency in Blender and I just resorted to painting the background of the logo in
+the PNG image with the same colour as the box.

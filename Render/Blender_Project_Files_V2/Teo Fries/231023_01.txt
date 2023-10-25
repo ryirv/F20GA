@@ -1,0 +1,13 @@
+## 231023_01
+Today we had a meeting to plan what the backgrounds should look like for our model showcase and I continued to work on my 3D model. I started adding fries to the model and I feel like that in its current state, it looks good so far.
+
+First, I started with a tall cuboid. Then someone in my group showed me how to split the cuboit into several more faces so that I could perform sculpting on each of the fries. I then copy and pasted each of the fries and moved, scaled, and rotated them inside the fries holder. I then used the elastic deform tool in the sculpting tab to bend and shape each of the fries so that they didn't just look like cuboids. While time consuming, I'm happy with the result so far.
+
+I still have to continue filling up the holder with more fries, but
+I am confident I will finish tomorrow. I believe that texturing
+shouldn't be too difficult as I only really need to texture:
+1. The fries and
+2. The fries holder.
+Once this is done, I will begin work on my assigned task for creating
+props for the background display of the 3D models. My task is to
+create a plate.

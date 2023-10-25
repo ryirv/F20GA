@@ -1,0 +1,9 @@
+## 241023_01
+Today I have finished the modelling of the fries. Nothing really interesting to note in terms of that, I just copied a cuboid, used the deform sculpting tool, and repeated until the box was filled with fries all around. I had to cut off any fries that were clipping out from the bottom by selecting the faces in the Modeling tab and deleting the faces until there was no more fries sticking out.
+
+Overall, I'm really happy with how this model has turned out. In my opinion, it looks detailed and like realistic fries will sticking to the polygonal style 
+the rest of the group has gone for.
+
+It's certainly not the most efficient model in terms of graphics processing; there's a lot of unseen geometry and verticies inside the box which causes unnecessary vertex calculations overdraw. If I were to do the model again, I would improve it by making only the top of the fries visible.
+
+The next step will be to texture the model. I feel this should be relatively simple to do as I will only be using two materials; one for the box and the other for all the fries.

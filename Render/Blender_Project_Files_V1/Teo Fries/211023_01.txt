@@ -1,0 +1,5 @@
+## 211023_01 - Fries
+I started working on the 3D model for the fries. To start, I began with creating the fries holder. I learned several useful techniques for adding verticies and faces which made creating the base of the model reallyeasy. When extruding the fries holder, I used this tutorial to flatten out the uneven top and made it even: 
+https://youtu.be/k28DKsddg6Y
+
+I created the hole by creating two circles and a rectangle, and then the "Knife project" tool to project an area on the side of the fries holder, andthen deleted the faces to create the semi-hole. The result is the image you see in this folder.
