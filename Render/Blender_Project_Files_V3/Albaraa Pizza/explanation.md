@@ -9,6 +9,6 @@ I created a lattice like structure for cheese, and a cylinder for sauce. I tried
 I attempted the lattice for the cheese with circular holes.  But it looked terrible, this can be seen in "holeycheese.blend"
 I then tried it again but with diagonal lines but again it didn't look good, this can be seen in "latticecheeseweird.blend"
 
-Since the cheese lattice didn't work out at all, so I left the cheese and instead used an image which had melted cheese and sauce which looked much better, this will be seen in the final section.
+Since the cheese lattice didn't work out at all, so I left the cheese and instead used an image which had melted cheese and sauce which looked much better, this will be seen in the final section. The sauce went through many iterations, a previous iteration can be seen at "sauce before.png"
 
 
