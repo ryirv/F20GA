@@ -1,0 +1,1 @@
+For v1, I created an initial sketch of the burger I would like to make and decided to add tomatoes, lettuce, cheese, the patty itself and the burger buns.
