@@ -1,1 +1,1 @@
-I started with some simple sketches of ice cream. My main inspiration was from cup-style ice-creams from fast food restaurants such as the McFlurry.
+I started with some simple sketches of ice cream. My main inspiration was from cup-style ice-creams from fast food restaurants such as the McFlurry. I added to these sketches a couple of times, of particular note was when I was trying to figure out the path that the "extruded" ice cream should take.
