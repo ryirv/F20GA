@@ -1,0 +1,1 @@
+For v3, I added in the lettuce and tomatoes to the object. I created these using a square and a cyclinder. There was quite a lot of work done for the modelling.
