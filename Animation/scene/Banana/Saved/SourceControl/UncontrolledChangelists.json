@@ -5,6 +5,9 @@
 			"guid": "00000000000000000000000000000000",
 			"description": "Default Uncontrolled Changelist",
 			"files": [
+				"/Users/albaraaothman/Documents/GitHub/F20GA/Animation/scene/Banana/Content/StarterContent/Particles/P_Fire.uasset",
+				"/Users/albaraaothman/Documents/GitHub/F20GA/Animation/scene/Banana/Content/Banana/Sequences/ChipsThrow.uasset",
+				"/Users/albaraaothman/Documents/GitHub/F20GA/Animation/scene/Banana/Content/Banana/Main.umap",
 				"C:/Users/Murray/Nextcloud/University/Graphics/Group Coursework/F20GA/Animation/scene/Banana/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset",
 				"C:/Users/Murray/Nextcloud/University/Graphics/Group Coursework/F20GA/Animation/scene/Banana/Content/Banana/Cube_037_1.uasset",
 				"C:/Users/Murray/Nextcloud/University/Graphics/Group Coursework/F20GA/Animation/scene/Banana/Content/Banana/Cube_036_1.uasset",
