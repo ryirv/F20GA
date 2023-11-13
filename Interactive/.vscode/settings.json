@@ -75,6 +75,5 @@
         "functional": "cpp",
         "iterator": "cpp",
         "utility": "cpp"
-    },
-    "cmake.sourceDirectory": "C:/Users/Murray/Nextcloud/University/Graphics/Group Coursework/F20GA/Interactive/include/glm"
+    }
 }
