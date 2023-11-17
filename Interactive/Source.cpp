@@ -265,8 +265,11 @@ void update()
 	if (keyStatus[GLFW_KEY_RIGHT]) modelRotation.y -= 0.05f;
 	if (keyStatus[GLFW_KEY_UP]) modelRotation.x += 0.05f;
 	if (keyStatus[GLFW_KEY_DOWN]) modelRotation.x -= 0.05f;
-	if (keyStatus[GLFW_KEY_W]) modelPosition.z += 0.10f;
-	if (keyStatus[GLFW_KEY_S]) modelPosition.z -= 0.10f;
+
+	if (keyStatus[GLFW_KEY_W]) cameraPosition.z -= 0.10f;
+	if (keyStatus[GLFW_KEY_S]) cameraPosition.z += 0.10f;
+	if (keyStatus[GLFW_KEY_D]) cameraPosition.x += 0.10f;
+	if (keyStatus[GLFW_KEY_A]) cameraPosition.x -= 0.10f;
 
 	if (keyStatus[GLFW_KEY_R]) pipeline.ReloadShaders();
 
