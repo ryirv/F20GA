@@ -12,6 +12,7 @@
                 "-L./lib",
                 "src/*.cpp",
                 "src/glad.c",
+                "${workspaceFolder}/include/glad/glad.h",
                 "${workspaceFolder}/include/imgui/imgui.cpp",
                 "${workspaceFolder}/include/imgui/imgui_demo.cpp",
                 "${workspaceFolder}/include/imgui/imgui_draw.cpp",
