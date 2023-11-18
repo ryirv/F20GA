@@ -86,7 +86,8 @@ bool keyStatus[1024];								// Track key strokes
 auto currentTime = 0.0f;							// Framerate
 auto deltaTime = 0.0f;								// time passed
 auto lastTime = 0.0f;								// Used to calculate Frame rate
-
+auto xmouse = 0.0;
+auto ymouse = 0.0;
 Pipeline pipeline;									// Add one pipeline plus some shaders.
 Content content;									// Add one content loader (+drawing).
 Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - openGLDebugCallback() ) or manual calls ( Apple - glCheckError() ) 
@@ -185,10 +186,10 @@ int main()
 
 		glfwSwapBuffers(window); 		// swap buffers (avoid flickering and tearing)
 
+		glfwGetCursorPos(window, &xmouse, &ymouse);
 		running &= (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE); // exit if escape key pressed
 		running &= (glfwWindowShouldClose(window) != GL_TRUE);
 	} while (running);
-
 	endProgram(); // Close and clean everything up...
 
 	// cout << "\nPress any key to continue...\n";
@@ -271,6 +272,9 @@ void update()
 	if (keyStatus[GLFW_KEY_S]) cameraPosition.z += 0.10f;
 	if (keyStatus[GLFW_KEY_D]) cameraPosition.x += 0.10f;
 	if (keyStatus[GLFW_KEY_A]) cameraPosition.x -= 0.10f;
+	if (keyStatus[GLFW_KEY_E]) cameraPosition.y += 0.10f;
+	if (keyStatus[GLFW_KEY_Q]) cameraPosition.y -= 0.10f;
+
 
 	if (keyStatus[GLFW_KEY_R]) pipeline.ReloadShaders();
 
@@ -397,6 +401,10 @@ void onMouseMoveCallback(GLFWwindow *window, double x, double y)
 {
 	int mouseX = static_cast<int>(x);
 	int mouseY = static_cast<int>(y);
+	
+	auto xChange = mouseX - xmouse;
+	auto yChange = mouseY - ymouse;
+
 }
 
 void onMouseWheelCallback(GLFWwindow *window, double xoffset, double yoffset)
