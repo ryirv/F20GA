@@ -41,6 +41,7 @@ using namespace glm;
 
 // Main fuctions
 void startup();
+void updateInput();
 void update();
 void render();
 void ui();
@@ -78,6 +79,7 @@ auto windowHeight =800;								// Window height
 auto running(true);							  		// Are we still running our main loop
 mat4 projMatrix;							 		// Our Projection Matrix
 vec3 cameraPosition = vec3(0.0f, 0.0f, 5.0f);		// Where is our camera
+float cameraDirection = 0.0f;						// Direction camera is looking
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);			// Camera front vector
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);				// Camera up vector
 auto aspect = (float)windowWidth / (float)windowHeight;	// Window aspect ration
@@ -176,6 +178,7 @@ int main()
 
 		glfwPollEvents(); 						// poll callbacks
 
+		updateInput();
 		update(); 								// update (physics, animation, structures, etc)
 		render(); 								// call render function.
 		ui();									// call function to render ui.
@@ -261,19 +264,128 @@ void startup()
 	projMatrix = glm::perspective(glm::radians(fovy), aspect, 0.1f, 1000.0f);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int keyHold[1024];
+
+bool keyPressedOnce(int key) {
+	return keyStatus[key] && keyHold[key] == 1;
+}
+
+void updateInput() {
+	for (int i = 0; i < 1024; i++) {
+		if (keyStatus[i]) {
+			keyHold[i]++;
+		}
+		else keyHold[i] = 0;
+	}
+}
+
+
+
+
+void updateWalk() {
+	
+
+	float movex = 0.;
+	float movez = 0.;
+	float rot = 0.;
+
+	float sin_d = sin(cameraDirection);
+	float cos_d = cos(cameraDirection);
+
+	// NOTE: isWalking not used but could be useful later.
+	bool isWalking = false;
+
+	// NOTE: same with speed.
+	float speed = 0.1f;
+
+	// Forward
+	if (keyStatus[GLFW_KEY_W]) {
+		movex += sin_d*speed;
+		movez += cos_d*speed;
+
+		isWalking = true;
+	}
+	// Left
+	if (keyStatus[GLFW_KEY_A]) {
+		movex += cos_d*speed;
+		movez += -sin_d*speed;
+
+		isWalking = true;
+	}
+	// Backwards
+	if (keyStatus[GLFW_KEY_S]) {
+		movex += -sin_d*speed;
+		movez += -cos_d*speed;
+
+		isWalking = true;
+	}
+	// Right
+	if (keyStatus[GLFW_KEY_D]) {
+		movex += -cos_d*speed;
+		movez += sin_d*speed;
+		isWalking = true;
+	}
+
+	// Up and down
+	if (keyStatus[GLFW_KEY_SPACE]) cameraPosition.y += 0.10f;
+	if (keyStatus[GLFW_KEY_LEFT_SHIFT]) cameraPosition.y -= 0.10f;
+
+	cameraPosition.x += movex;
+	cameraPosition.z += movez;	
+}
+
+void updateTurnCamera() {
+	// Note: later we could possibly change this to the mouse pointer
+	// to control the direction of the camera.
+	float TURN_SPEED = 0.05f;
+	if (keyStatus[GLFW_KEY_E]) cameraDirection -= TURN_SPEED;
+	if (keyStatus[GLFW_KEY_Q]) cameraDirection += TURN_SPEED;
+}
+
+
+
+float delta = 0.0f;
+
+void setLightPos(float x, float y, float z) {
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "light_direction"), x, y, z);
+}
+
+bool lightFollowsCamera = false;
+
 void update()
 {
-	if (keyStatus[GLFW_KEY_LEFT]) modelRotation.y += 0.05f;
-	if (keyStatus[GLFW_KEY_RIGHT]) modelRotation.y -= 0.05f;
-	if (keyStatus[GLFW_KEY_UP]) modelRotation.x += 0.05f;
-	if (keyStatus[GLFW_KEY_DOWN]) modelRotation.x -= 0.05f;
+	updateWalk();
+	updateTurnCamera();
 
-	if (keyStatus[GLFW_KEY_W]) cameraPosition.z -= 0.10f;
-	if (keyStatus[GLFW_KEY_S]) cameraPosition.z += 0.10f;
-	if (keyStatus[GLFW_KEY_D]) cameraPosition.x += 0.10f;
-	if (keyStatus[GLFW_KEY_A]) cameraPosition.x -= 0.10f;
-	if (keyStatus[GLFW_KEY_E]) cameraPosition.y += 0.10f;
-	if (keyStatus[GLFW_KEY_Q]) cameraPosition.y -= 0.10f;
+	delta += 0.05;
+
+	if (keyPressedOnce(GLFW_KEY_TAB)) lightFollowsCamera = !lightFollowsCamera;
+	
+	if (lightFollowsCamera)
+		setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	else
+		setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);	
+	
 
 
 	if (keyStatus[GLFW_KEY_R]) pipeline.ReloadShaders();
@@ -304,10 +416,17 @@ void render()
 	// Use our shader programs
 	glUseProgram(pipeline.pipe.program);
 
+	float x = cameraPosition.x;
+	float y = cameraPosition.y;
+	float z = cameraPosition.z;
+	float LOOK_DIST = 50.f;
+	vec3 lookat = vec3(x+sin(cameraDirection)*LOOK_DIST, y, z+cos(cameraDirection)*LOOK_DIST);
+
 	// Setup camera
 	glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
-									   cameraPosition + cameraFront, // centre
-									   cameraUp);					 // up
+									   lookat, 						 // centre
+									   vec3(0., 1., 0.));					 // up
+
 
 	// Do some translations, rotations and scaling
 	// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
