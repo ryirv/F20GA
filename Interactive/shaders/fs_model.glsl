@@ -15,14 +15,17 @@ uniform mat4 model_matrix;
 uniform vec3 light_direction;
 
 
-
+// TODO: made the lighting much smoother.
 void main(void){
   //color = vec4(1.0,1.0,1.0,1.0);
   //color = vec4(fs_in.normals, 1.0);
   // color = texture(tex, fs_in.tc);
 
+  // How does this code work?
+  // Idk. Normals and dot products are really good for lighting apparently.
   vec3 normal = fs_in.normals;
 
+  // Dot product
   float dp = (normal.x * light_direction.x + normal.y * light_direction.y + normal.z * light_direction.z);
 
   float c = ((dp + 1.) / 2.);

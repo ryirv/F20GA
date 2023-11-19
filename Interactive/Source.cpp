@@ -78,8 +78,8 @@ auto windowWidth = 800;								// Window width
 auto windowHeight =800;								// Window height
 auto running(true);							  		// Are we still running our main loop
 mat4 projMatrix;							 		// Our Projection Matrix
-vec3 cameraPosition = vec3(0.0f, 0.0f, 5.0f);		// Where is our camera
-float cameraDirection = 0.0f;						// Direction camera is looking
+vec3 cameraPosition = vec3(18.1f, 5.1f, 1.8f);		// Where is our camera
+float cameraDirection = -1.6;						// Direction camera is looking
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);			// Camera front vector
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);				// Camera up vector
 auto aspect = (float)windowWidth / (float)windowHeight;	// Window aspect ration
@@ -384,7 +384,9 @@ void update()
 	if (lightFollowsCamera)
 		setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	else
+	// Light source spins around the model.
 		setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);	
+
 	
 
 
@@ -477,7 +479,8 @@ void ui()
 	if (ImGui::Begin("Info", nullptr, window_flags)) {
 		ImGui::Text("About: 3D Graphics and Animation 2023/24"); // ImGui::Separator();
 		ImGui::Text("Performance: %.3fms/Frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Pipeline: %s", pipeline.pipe.error?"ERROR":"OK");
+		// ImGui::Text("Pipeline: %s", pipeline.pipe.error?"ERROR":"OK");
+		ImGui::Text("Camera: %.1f, %.1f, %.1f, %.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraDirection);
 	}
 	ImGui::End();
 
