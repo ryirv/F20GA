@@ -37,7 +37,15 @@ using namespace glm;
 #include "src/Content.hpp"		// Setup content loader and drawing functions - https://github.com/KhronosGroup/glTF - https://github.com/syoyo/tinygltf 
 #include "src/Debugger.hpp"		// Setup debugger functions.
 
+struct ModelDetails{
 
+	vec3 modelPosition;
+	vec3 modelRotation;
+	Content content;
+
+};
+
+vector<ModelDetails> allModels;
 
 // Main fuctions
 void startup();
