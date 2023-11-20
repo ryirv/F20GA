@@ -38,6 +38,8 @@ using namespace glm;
 #include "src/Content.hpp"		// Setup content loader and drawing functions - https://github.com/KhronosGroup/glTF - https://github.com/syoyo/tinygltf 
 #include "src/Debugger.hpp"		// Setup debugger functions.
 
+#define HALF_PI 1.57
+
 struct ModelDetails{
 
 	vec3 modelPosition;
@@ -368,9 +370,15 @@ void updateWalk() {
 void updateTurnCamera(double deltaX,double deltaY) {
 	// Note: later we could possibly change this to the mouse pointer
 	// to control the direction of the camera.
-	float TURN_SPEED = 20.0f;
-	cameraYaw += deltaX * deltaTime * TURN_SPEED;
-	cameraPitch += deltaY * deltaTime * TURN_SPEED;
+	float TURN_SPEED = 0.0007f;
+
+	// TODO: re-add delta time with accurate equasion.
+	cameraYaw += deltaX * TURN_SPEED;
+	cameraPitch += deltaY * TURN_SPEED;
+	// Do not allow us to look up more than we should otherwise things will
+	// go really weird
+	if (cameraPitch > HALF_PI) cameraPitch = HALF_PI;
+	if (cameraPitch < -HALF_PI) cameraPitch = -HALF_PI;
 }
 
 
@@ -382,6 +390,7 @@ void setLightPos(float x, float y, float z) {
 }
 
 bool lightFollowsCamera = false;
+bool murraysCameraMode = true;
 
 void update()
 {
@@ -389,7 +398,8 @@ void update()
 
 	delta += 0.05;
 
-	if (keyPressedOnce(GLFW_KEY_TAB)) lightFollowsCamera = !lightFollowsCamera;
+	// if (keyPressedOnce(GLFW_KEY_TAB)) lightFollowsCamera = !lightFollowsCamera;
+	if (keyPressedOnce(GLFW_KEY_TAB)) murraysCameraMode = !murraysCameraMode;
 	
 	if (lightFollowsCamera)
 		setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -432,7 +442,12 @@ void render()
 	float y = cameraPosition.y;
 	float z = cameraPosition.z;
 	float LOOK_DIST = 50.f;
-	vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST, y + sin(cameraPitch)* LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST);
+
+	// THIS WEIRD MATHS EQUASION EXPLAINED:
+	// When we look at a point, this point should be restraint to a sphere around the camera.
+	// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
+	// If we look straight forward (and not up or down), then the point is on the xz-plane.
+	vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
 
 	// Setup camera
 	glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
@@ -549,15 +564,24 @@ void onClickReleased(int button){
 	}
 }
 
+int prevMouseX = 0;
+int prevMouseY = 0;
+
 void onMouseMoveCallback(GLFWwindow *window, double x, double y)
 {
 	int mouseX = static_cast<int>(x);
 	int mouseY = static_cast<int>(y);
 	
-	auto xChange = mouseX - xmouse;
-	auto yChange = mouseY - ymouse;
-	if (heldMouseButton == GLFW_MOUSE_BUTTON_RIGHT) updateTurnCamera(xChange,yChange); //If right clock is held down then we do camera movements
-
+	auto xChange = mouseX - prevMouseX;
+	auto yChange = mouseY - prevMouseY;
+	prevMouseX = mouseX;
+	prevMouseY = mouseY;
+	//If right clock is held down then we do camera movements
+	if (murraysCameraMode) {
+		if (heldMouseButton != -1) updateTurnCamera(xChange,yChange); 
+	}
+	else  updateTurnCamera(xChange,yChange);
+		
 }
 
 void onMouseWheelCallback(GLFWwindow *window, double xoffset, double yoffset)
