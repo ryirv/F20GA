@@ -44,6 +44,7 @@ struct ModelDetails{
 
 	vec3 modelPosition;
 	vec3 modelRotation;
+	vec3 modelScale;
 	Content content;
 
 };
@@ -103,11 +104,7 @@ auto lastTime = 0.0f;								// Used to calculate Frame rate
 auto xmouse = 0.0;
 auto ymouse = 0.0;
 Pipeline pipeline;									// Add one pipeline plus some shaders.
-Content content;									// Add one content loader (+drawing).
 Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - openGLDebugCallback() ) or manual calls ( Apple - glCheckError() ) 
-
-vec3 modelPosition;									// Model position
-vec3 modelRotation;									// Model rotation
 
 int heldMouseButton = -1;
 
@@ -250,16 +247,45 @@ void startup()
 	cout << "VERSION: " << (char *)glGetString(GL_VERSION) << endl;
 	cout << "RENDERER: " << (char *)glGetString(GL_RENDERER) << endl;	
 
-	cout << endl << "Loading content..." << endl;	
-	//content.LoadGLTF("assets/dog.gltf");
-	content.LoadGLTF("assets/burger/burger.gltf", "assets/burger/burger.png");
+	cout << endl << "Loading content..." << endl;
+
+	//add the burger:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	ModelDetails burgerModelDetails;
+	//load from the appropriate files
+	burgerModelDetails.content.LoadGLTF("assets/burger/burger.gltf", "assets/burger/burger.png");
+	//set the initial position/rotation/scale values for the burger model
+	burgerModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	burgerModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	burgerModelDetails.modelScale = glm::vec3(1.0f, 1.0f, 1.0f);
+	// add the model details of the burger to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	allModels.push_back(burgerModelDetails);
+
+	//fries next:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	ModelDetails friesModelDetails;
+	//load from the appropriate files
+	friesModelDetails.content.LoadGLTF("assets/Food/Fries.gltf", "assets/Food/Chip.png");
+	//set the initial position/rotation/scale values for the fries model
+	friesModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 2.0f);
+	friesModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	friesModelDetails.modelScale = glm::vec3(0.3f, 0.3f, 0.3f);
+	// add the model details of the fries to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	allModels.push_back(friesModelDetails);
+
+	//Now add the rest of the models here...
+
+
+
+
+
+
+
+
+
 
 	pipeline.CreatePipeline();
 	pipeline.LoadShaders("shaders/vs_model.glsl", "shaders/fs_model.glsl");
-
-	// Start from the centre
-	modelPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// A few optimizations.
 	glFrontFace(GL_CCW);
@@ -438,29 +464,50 @@ void render()
 	// Use our shader programs
 	glUseProgram(pipeline.pipe.program);
 
-	float x = cameraPosition.x;
-	float y = cameraPosition.y;
-	float z = cameraPosition.z;
-	float LOOK_DIST = 50.f;
+	//I've temporarily commented his camera code out. I just needed it to point to 0,0,0 to make sure that the objects we appearing as they should without fighting with the camera - Dean
+	//float x = cameraPosition.x;
+	//float y = cameraPosition.y;
+	//float z = cameraPosition.z;
+	//float LOOK_DIST = 50.f;
 
 	// THIS WEIRD MATHS EQUASION EXPLAINED:
 	// When we look at a point, this point should be restraint to a sphere around the camera.
 	// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
 	// If we look straight forward (and not up or down), then the point is on the xz-plane.
-	vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
+	//vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
 
 	// Setup camera
-	glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
-									   lookat, 						 // centre
-									   vec3(0., 1., 0.));					 // up
+	//glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
+	//								   lookat, 						 // centre
+	//								   vec3(0., 1., 0.));					 // up
+
+	//Start of my temporary camera code just to have the camera looking at the origin for testing purposes (see above ^) - Dean
+	//Point we want to look at (the origin)
+	vec3 lookAt = vec3(0.0f, 0.0f, 0.0f); 
+	//Setup camera to look at the origin (0,0,0)
+	glm::mat4 viewMatrix = glm::lookAt(cameraPosition, // camera positiion
+                                   lookAt,   // point in space that the camera is looking at
+                                   vec3(0.0, 1.0, 0.0)); // z axis is "up"
+	//end of my camera test code. Can be deleted when you wan't to put the camera behaviur back to how it was before - Dean
 
 
-	// Do some translations, rotations and scaling
+	for (std::size_t i = 0; i < allModels.size(); ++i) {
+    	ModelDetails modelDetails = allModels[i];
+		// Do some translations, rotations and scaling
 	// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
-	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, modelRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, modelRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.2f, 1.2f, 1.2f));
+
+	//apply translations
+	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelDetails.modelPosition.x, modelDetails.modelPosition.y, modelDetails.modelPosition.z));
+
+	//apply x-axis rotation
+	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	//apply y-axis rotation
+	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	//apply z-axis rotation
+	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	//apply x-axis scale:
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(modelDetails.modelScale.x, modelDetails.modelScale.y, modelDetails.modelScale.z));
 
 	glm::mat4 mv_matrix = viewMatrix * modelMatrix;
 
@@ -468,9 +515,11 @@ void render()
 	glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
 
-	glBindTexture(GL_TEXTURE_2D, content.texid);
+	glBindTexture(GL_TEXTURE_2D, modelDetails.content.texid);
 
-	content.DrawModel(content.vaoAndEbos, content.model);
+	modelDetails.content.DrawModel(modelDetails.content.vaoAndEbos, modelDetails.content.model);
+
+	}
 	
 	#if defined(__APPLE__)
 		glCheckError();
