@@ -19,5 +19,13 @@ uniform vec3 light_direction;
 void main(void){
   //color = vec4(1.0,1.0,1.0,1.0);
   //color = vec4(fs_in.normals, 1.0);
-  color = texture(tex, fs_in.tc);
+
+  vec3 normal = fs_in.normals;
+
+  // Dot product
+  float dp = (normal.x * light_direction.x + normal.y * light_direction.y + normal.z * light_direction.z);
+
+  float c = ((dp + 1.) / 2.)*0.10+0.90;
+
+  color = texture(tex, fs_in.tc)*vec4(c,c,c, 1.0);
 }
