@@ -79,7 +79,8 @@ auto windowHeight =800;								// Window height
 auto running(true);							  		// Are we still running our main loop
 mat4 projMatrix;							 		// Our Projection Matrix
 vec3 cameraPosition = vec3(18.1f, 5.1f, 1.8f);		// Where is our camera
-float cameraDirection = -1.6;						// Direction camera is looking
+float cameraYaw = -1.6;								// Yaw camera is looking
+float cameraPitch = 0;								// Pitch camera is looking
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);			// Camera front vector
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);				// Camera up vector
 auto aspect = (float)windowWidth / (float)windowHeight;	// Window aspect ration
@@ -97,6 +98,7 @@ Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - op
 vec3 modelPosition;									// Model position
 vec3 modelRotation;									// Model rotation
 
+int heldMouseButton = -1;
 
 int main()
 {
@@ -309,8 +311,8 @@ void updateWalk() {
 	float movez = 0.;
 	float rot = 0.;
 
-	float sin_d = sin(cameraDirection);
-	float cos_d = cos(cameraDirection);
+	float sin_d = sin(cameraYaw);
+	float cos_d = cos(cameraYaw);
 
 	// NOTE: isWalking not used but could be useful later.
 	bool isWalking = false;
@@ -347,19 +349,19 @@ void updateWalk() {
 	}
 
 	// Up and down
-	if (keyStatus[GLFW_KEY_SPACE]) cameraPosition.y += 0.10f;
-	if (keyStatus[GLFW_KEY_LEFT_SHIFT]) cameraPosition.y -= 0.10f;
+	if (keyStatus[GLFW_KEY_SPACE] || keyStatus[GLFW_KEY_R]) cameraPosition.y += 0.10f;
+	if (keyStatus[GLFW_KEY_LEFT_SHIFT] || keyStatus[GLFW_KEY_LEFT_CONTROL] || keyStatus[GLFW_KEY_F]) cameraPosition.y -= 0.10f;
 
 	cameraPosition.x += movex;
 	cameraPosition.z += movez;	
 }
 
-void updateTurnCamera() {
+void updateTurnCamera(double deltaX,double deltaY) {
 	// Note: later we could possibly change this to the mouse pointer
 	// to control the direction of the camera.
-	float TURN_SPEED = 0.05f;
-	if (keyStatus[GLFW_KEY_E]) cameraDirection -= TURN_SPEED;
-	if (keyStatus[GLFW_KEY_Q]) cameraDirection += TURN_SPEED;
+	float TURN_SPEED = 1.0f;
+	cameraYaw += deltaX * deltaTime * TURN_SPEED;
+	cameraPitch += deltaY * deltaTime * TURN_SPEED;
 }
 
 
@@ -375,7 +377,6 @@ bool lightFollowsCamera = false;
 void update()
 {
 	updateWalk();
-	updateTurnCamera();
 
 	delta += 0.05;
 
@@ -390,7 +391,7 @@ void update()
 	
 
 
-	if (keyStatus[GLFW_KEY_R]) pipeline.ReloadShaders();
+	if (keyStatus[GLFW_KEY_LEFT_ALT]) pipeline.ReloadShaders();
 
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
@@ -422,7 +423,7 @@ void render()
 	float y = cameraPosition.y;
 	float z = cameraPosition.z;
 	float LOOK_DIST = 50.f;
-	vec3 lookat = vec3(x+sin(cameraDirection)*LOOK_DIST, y, z+cos(cameraDirection)*LOOK_DIST);
+	vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST, y + sin(cameraPitch)* LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST);
 
 	// Setup camera
 	glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
@@ -480,7 +481,7 @@ void ui()
 		ImGui::Text("About: 3D Graphics and Animation 2023/24"); // ImGui::Separator();
 		ImGui::Text("Performance: %.3fms/Frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		// ImGui::Text("Pipeline: %s", pipeline.pipe.error?"ERROR":"OK");
-		ImGui::Text("Camera: %.1f, %.1f, %.1f, %.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraDirection);
+		ImGui::Text("Camera: %.1f, %.1f, %.1f, %.1f, %.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraYaw,cameraPitch);
 	}
 	ImGui::End();
 
@@ -517,6 +518,26 @@ void onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mo
 
 void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 {
+	std::cout << "Button Held" << std::endl;
+	if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT)) {
+		if(action == GLFW_PRESS){
+			heldMouseButton = button;
+			std::cout << "Button Held" << std::endl;
+		}
+		else if (action == GLFW_RELEASE) {
+			if(button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT){
+				heldMouseButton = -1;
+				std::cout << "Button Released" << std::endl;
+			}
+    	}	
+    }
+}
+
+void onClickReleased(int button){
+	if(button == GLFW_MOUSE_BUTTON_LEFT){
+		//if mouse is over an object when left mouse button is released, detect which object
+
+	}
 }
 
 void onMouseMoveCallback(GLFWwindow *window, double x, double y)
@@ -526,6 +547,7 @@ void onMouseMoveCallback(GLFWwindow *window, double x, double y)
 	
 	auto xChange = mouseX - xmouse;
 	auto yChange = mouseY - ymouse;
+	if (heldMouseButton == GLFW_MOUSE_BUTTON_RIGHT) updateTurnCamera(xChange,yChange); //If right clock is held down then we do camera movements
 
 }
 
