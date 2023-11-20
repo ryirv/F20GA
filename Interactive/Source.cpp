@@ -537,6 +537,13 @@ void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 	
 }
 
+void onClickReleased(int button){
+	if(button == GLFW_MOUSE_BUTTON_LEFT){
+		//if mouse is over an object when left mouse button is released, detect which object
+
+	}
+}
+
 void onMouseMoveCallback(GLFWwindow *window, double x, double y)
 {
 	int mouseX = static_cast<int>(x);
