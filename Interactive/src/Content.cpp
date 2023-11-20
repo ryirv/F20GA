@@ -144,12 +144,9 @@ void Content::BindMesh(map<int, GLuint> &vbos, Model &model, Mesh &mesh)
 void Content::BindModelNodes(map<int, GLuint> &vbos, Model &model, Node &node)
 {
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size()))
-	{
-		for (size_t i = 0; i < model.meshes.size(); i++)
-		{
-			BindMesh(vbos, model, model.meshes[i]);
-		}
-	}
+    {
+        BindMesh(vbos, model, model.meshes[node.mesh]);
+    }
 	for (size_t i = 0; i < node.children.size(); i++)
 	{
 		assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
