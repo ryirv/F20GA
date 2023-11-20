@@ -14,6 +14,7 @@
 #include <vector>
 using namespace std;
 
+
 #define GL_SILENCE_DEPRECATION
 #include <glad/glad.h> // Extend OpenGL Specfication to version 4.5 for WIN64 and versions 4.1 for Apple (note: two different files).
 
@@ -241,7 +242,7 @@ void startup()
 
 	cout << endl << "Loading content..." << endl;	
 	//content.LoadGLTF("assets/dog.gltf");
-	content.LoadGLTF("assets/Food/Fries.gltf");
+	content.LoadGLTF("assets/burger/burger.gltf", "assets/burger/burger.png");
 
 	pipeline.CreatePipeline();
 	pipeline.LoadShaders("shaders/vs_model.glsl", "shaders/fs_model.glsl");

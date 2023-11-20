@@ -5,13 +5,20 @@ Content::Content() {
 
 }
 
-void Content::LoadGLTF(string filename){
+void Content::LoadGLTF(string filename, string tp){
 
     cout << "Trying to load model " << filename << "\n";
 
 	TinyGLTF loader;
 	string err;
     string warn;
+
+	if (!tp.empty())
+	{
+		externalTexLoaded = true;
+		texPath = tp;
+	}
+	else externalTexLoaded = false;
 
 	bool res = loader.LoadASCIIFromFile(&model, &err, &warn, filename);
 	if (!warn.empty()) cout << "WARNING - GLTF: " << warn << endl;
@@ -98,7 +105,26 @@ void Content::BindMesh(map<int, GLuint> &vbos, Model &model, Mesh &mesh)
 				std::cout << "vaa missing: " << attrib.first << std::endl;
 		}
 
-		if (model.textures.size() > 0)
+		if (externalTexLoaded) {
+			int width, height, nrChannels;
+			unsigned char *data = stbi_load(texPath.c_str(), &width, &height, &nrChannels, 0); 
+			
+			glGenTextures(1, &texid);
+
+			glBindTexture(GL_TEXTURE_2D, texid);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+			GLenum format = GL_RGBA;
+			GLenum type = GL_UNSIGNED_BYTE;
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+							format, type, data);
+		}
+		else if (model.textures.size() > 0)
 		{
 			// fixme: Use material's baseColor
 			tex = model.textures[0];

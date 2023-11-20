@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 #include <tinygltf/tiny_gltf.h> // Model loading library - tiny gltf - https://github.com/syoyo/tinygltf
+#include <tinygltf/stb_image.h> // Image loading library - stb image -
 using namespace tinygltf;
 
 #include <string>
@@ -21,14 +22,18 @@ class Content {
 		Model model;
 		Texture tex;
 		GLuint texid;
+		
 
-		void LoadGLTF(string filename);
+
+		void LoadGLTF(string filename, string tp = "");
 		void DrawModel(const pair<GLuint, map<int, GLuint>> &vaoAndEbos, Model &model);
 
 	virtual ~Content();
 	protected:
 
 	private:
+		string texPath;
+		bool externalTexLoaded = false;
 
 		// Loading
 		pair<GLuint, map<int, GLuint>> BindModel(Model &model);
