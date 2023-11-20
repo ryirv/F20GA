@@ -40,6 +40,15 @@ using namespace glm;
 
 #define HALF_PI 1.57
 
+struct ModelDetails{
+
+	vec3 modelPosition;
+	vec3 modelRotation;
+	Content content;
+
+};
+
+vector<ModelDetails> allModels;
 
 // Main fuctions
 void startup();
