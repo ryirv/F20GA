@@ -31,6 +31,7 @@ void Content::BindMesh(map<int, GLuint> &vbos, Model &model, Mesh &mesh)
 {
 	for (size_t i = 0; i < model.bufferViews.size(); ++i)
 	{
+		
 		const BufferView &bufferView = model.bufferViews[i];
 		if (bufferView.target == 0)
 		{ // TODO impl drawarrays
@@ -83,9 +84,9 @@ void Content::BindMesh(map<int, GLuint> &vbos, Model &model, Mesh &mesh)
 			if (attrib.first.compare("POSITION") == 0)
 				vaa = 0;
 			if (attrib.first.compare("NORMAL") == 0)
-				vaa = 1;
+				vaa = 0;
 			if (attrib.first.compare("TEXCOORD_0") == 0)
-				vaa = 2;
+				vaa = 0;
 			if (vaa > -1)
 			{
 				glEnableVertexAttribArray(vaa);
@@ -144,9 +145,11 @@ void Content::BindModelNodes(map<int, GLuint> &vbos, Model &model, Node &node)
 {
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size()))
 	{
-		BindMesh(vbos, model, model.meshes[node.mesh]);
+		for (size_t i = 0; i < model.meshes.size(); i++)
+		{
+			BindMesh(vbos, model, model.meshes[i]);
+		}
 	}
-
 	for (size_t i = 0; i < node.children.size(); i++)
 	{
 		assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
