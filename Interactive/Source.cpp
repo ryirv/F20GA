@@ -241,7 +241,8 @@ void startup()
 
 	cout << endl << "Loading content..." << endl;	
 	//content.LoadGLTF("assets/dog.gltf");
-	content.LoadGLTF("assets/Food/Fries.gltf");
+	//content.LoadGLTF("assets/Food/Fries.gltf");
+	content.LoadGLTF("assets/basescene/base_modelnofood.gltf");
 
 	pipeline.CreatePipeline();
 	pipeline.LoadShaders("shaders/vs_model.glsl", "shaders/fs_model.glsl");
