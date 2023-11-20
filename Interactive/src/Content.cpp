@@ -84,9 +84,9 @@ void Content::BindMesh(map<int, GLuint> &vbos, Model &model, Mesh &mesh)
 			if (attrib.first.compare("POSITION") == 0)
 				vaa = 0;
 			if (attrib.first.compare("NORMAL") == 0)
-				vaa = 0;
+				vaa = 1;
 			if (attrib.first.compare("TEXCOORD_0") == 0)
-				vaa = 0;
+				vaa = 2;
 			if (vaa > -1)
 			{
 				glEnableVertexAttribArray(vaa);
