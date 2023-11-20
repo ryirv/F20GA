@@ -118,7 +118,7 @@ int main()
 	// window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), glfwGetPrimaryMonitor(), NULL); // fullscreen
 
 	// Create our Window
-	const auto windowTitle = "My 3D Graphics and Animation OpenGL Application"s;
+	const auto windowTitle = "Banana Crime Scene Investigation Cleanup"s;
 	window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
 	if (!window) // Test if Window or OpenGL context creation failed
 	{
@@ -359,7 +359,7 @@ void updateWalk() {
 void updateTurnCamera(double deltaX,double deltaY) {
 	// Note: later we could possibly change this to the mouse pointer
 	// to control the direction of the camera.
-	float TURN_SPEED = 1.0f;
+	float TURN_SPEED = 20.0f;
 	cameraYaw += deltaX * deltaTime * TURN_SPEED;
 	cameraPitch += deltaY * deltaTime * TURN_SPEED;
 }
@@ -478,7 +478,7 @@ void ui()
 	ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
 	bool *p_open = NULL;
 	if (ImGui::Begin("Info", nullptr, window_flags)) {
-		ImGui::Text("About: 3D Graphics and Animation 2023/24"); // ImGui::Separator();
+		ImGui::Text("About: Banana Crime Scene Investigation Cleanup; 2023/24"); // ImGui::Separator();
 		ImGui::Text("Performance: %.3fms/Frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		// ImGui::Text("Pipeline: %s", pipeline.pipe.error?"ERROR":"OK");
 		ImGui::Text("Camera: %.1f, %.1f, %.1f, %.1f, %.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraYaw,cameraPitch);
