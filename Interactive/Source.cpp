@@ -97,6 +97,8 @@ Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - op
 vec3 modelPosition;									// Model position
 vec3 modelRotation;									// Model rotation
 
+int heldMouseButton = -1;
+
 
 int main()
 {
@@ -517,6 +519,22 @@ void onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mo
 
 void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 {
+
+
+	std::cout << "Button Held" << std::endl;
+	if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT)) {
+		if(action == GLFW_PRESS){
+			heldMouseButton = button;
+			std::cout << "Button Held" << std::endl;
+		}
+		else if (action == GLFW_RELEASE) {
+			if(button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT){
+				heldMouseButton = -1;
+				std::cout << "Button Released" << std::endl;
+			}
+    	}	
+    }
+	
 }
 
 void onMouseMoveCallback(GLFWwindow *window, double x, double y)
