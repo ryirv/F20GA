@@ -274,7 +274,6 @@ void startup()
 	allModels.push_back(friesModelDetails);
 
 	//Now add the rest of the models here...
-
 	//add the hotdog:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	ModelDetails hotdogModelDetails;
@@ -312,6 +311,15 @@ void startup()
 	condimentMModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
 	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
 	allModels.push_back(condimentMModelDetails);
+
+	ModelDetails baseScene;
+
+	baseScene.content.LoadGLTF("assets/base_model-nofood_copy_copy.gltf", "assets/textures/Scene.png");
+	baseScene.modelPosition = glm::vec3(0.0f, 0.0f, 10.0f);
+	baseScene.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	baseScene.modelScale = glm::vec3(1.0f, 1.0f, 1.0f);
+	allModels.push_back(baseScene);
+
 
 	//add the Ice cream:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
