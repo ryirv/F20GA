@@ -284,7 +284,6 @@ void startup()
 	allModels.push_back(fries);
 
 	//Now add the rest of the models here...
-
 	//add the hotdog:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	DynamicModel* hotdog = new DynamicModel(
@@ -315,6 +314,7 @@ void startup()
 
 	//add the Mustard Condiment:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+
 	DynamicModel* mustard = new DynamicModel(
 		MUSTARD_ID,
 		vec3(0.0f, 0.0f, 6.0f),   // Position
@@ -325,6 +325,21 @@ void startup()
 	);
 	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
 	allModels.push_back(mustard);
+  
+  
+	DynamicModel* baseScene = new DynamicModel(
+		MUSTARD_ID,
+		vec3(0.0f, 0.0f, 100.0f),   // Position
+		vec3(0.0f, 0.0f, 0.0f),   // Rotation
+		vec3(1.0f, 1.0f,1.0f),    // Scale
+		"assets/base_model-nofood_copy_copy.gltf", 
+    "assets/textures/Scene.png"
+	);
+  
+  // WARNING: Base scene is hoverable by player!
+  // Need a patch to prevent it from being hoverable!
+	allModels.push_back(baseScene);
+
 
 	//add the Ice cream: (TODO)
 
