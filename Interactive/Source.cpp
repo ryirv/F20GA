@@ -105,8 +105,12 @@ auto xmouse = 0.0;
 auto ymouse = 0.0;
 Pipeline pipeline;									// Add one pipeline plus some shaders.
 Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - openGLDebugCallback() ) or manual calls ( Apple - glCheckError() ) 
-
 int heldMouseButton = -1;
+
+//Code for Displaying Descriptions
+auto description = "";
+bool showDesc = false;
+auto startTime = 0.0f;
 
 int main()
 {
@@ -460,6 +464,15 @@ void update()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
+	if(showDesc){
+		if((lastTime-startTime) < 10)
+		{
+			ImGui::Begin("Pizza");
+        	ImGui::Text("This is a deliciously, cheesy, pepperoni and onion pizza.");
+        	ImGui::End();
+		}
+	}
 }
 
 
@@ -608,6 +621,12 @@ void onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mo
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		showDesc = true;
+		startTime = (float)glfwGetTime();
+	}
 }
 
 void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
