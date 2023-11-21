@@ -111,7 +111,6 @@ int heldMouseButton = -1;
 std::string describe;
 bool showDesc = false;
 auto startTime = 0.0f;
-string ldescribe;
 
 int main()
 {
@@ -466,7 +465,7 @@ void update()
 	ImGui::NewFrame();
 
 	if(showDesc){
-		ImGui::Begin("Pizza");
+		ImGui::Begin("Pizza", &showDesc);
         ImGui::Text("%s",describe.c_str());
         ImGui::End();
 	}
