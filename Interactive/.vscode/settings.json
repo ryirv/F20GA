@@ -74,7 +74,13 @@
     "algorithm": "cpp",
     "functional": "cpp",
     "iterator": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "*.tcc": "cpp",
+    "codecvt": "cpp",
+    "memory_resource": "cpp",
+    "random": "cpp",
+    "numbers": "cpp",
+    "cinttypes": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat",
   "C_Cpp_Runner.cCompilerPath": "gcc",

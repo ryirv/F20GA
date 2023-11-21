@@ -108,9 +108,10 @@ Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - op
 int heldMouseButton = -1;
 
 //Code for Displaying Descriptions
-auto description = "";
+std::string describe;
 bool showDesc = false;
 auto startTime = 0.0f;
+string ldescribe;
 
 int main()
 {
@@ -189,7 +190,6 @@ int main()
 		auto currentTime = (float)glfwGetTime(); // retrieve timelapse
 		deltaTime = currentTime - lastTime;		 // Calculate delta time
 		lastTime = currentTime;					 // Save for next frame calculations.
-
 		glfwPollEvents(); 						// poll callbacks
 
 		updateInput();
@@ -466,12 +466,9 @@ void update()
 	ImGui::NewFrame();
 
 	if(showDesc){
-		if((lastTime-startTime) < 10)
-		{
-			ImGui::Begin("Pizza");
-        	ImGui::Text("This is a deliciously, cheesy, pepperoni and onion pizza.");
-        	ImGui::End();
-		}
+		ImGui::Begin("Pizza");
+        ImGui::Text("%s",describe.c_str());
+        ImGui::End();
 	}
 }
 
@@ -624,6 +621,15 @@ void onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mo
 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
+		// https://www.youtube.com/watch?v=q97E8rOFWSU
+		ifstream inputFile;
+		inputFile.open("assets/descriptions/pizza.txt");
+		stringstream buffer;
+		buffer << inputFile.rdbuf();
+		describe = buffer.str();
+		cout << describe;
+		inputFile.close();
+		printf("%s",describe);
 		showDesc = true;
 		startTime = (float)glfwGetTime();
 	}
