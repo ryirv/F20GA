@@ -265,11 +265,14 @@ void startup()
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	ModelDetails friesModelDetails;
 	//load from the appropriate files
-	friesModelDetails.content.LoadGLTF("assets/Food/Fries.gltf", "assets/Food/Chip.png");
+	friesModelDetails.content.LoadGLTF("assets/pizza/pizza.gltf", "assets/textures/Pizza.png");
 	//set the initial position/rotation/scale values for the fries model
 	friesModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 2.0f);
 	friesModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	friesModelDetails.modelScale = glm::vec3(0.3f, 0.3f, 0.3f);
+	
+	// WARNING FOR THE PIZZA MODEL MAKE SURE TO APPLY THIS EXACT SCALING OTHERWISE
+	// YOULL END UP WITH A PIZZA CAKE.
+	friesModelDetails.modelScale = glm::vec3(0.078f, 0.04f, 0.078f);
 	// add the model details of the fries to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
 	allModels.push_back(friesModelDetails);
 
