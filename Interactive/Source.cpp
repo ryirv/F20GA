@@ -269,14 +269,61 @@ void startup()
 	//set the initial position/rotation/scale values for the fries model
 	friesModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 2.0f);
 	friesModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	
-	// WARNING FOR THE PIZZA MODEL MAKE SURE TO APPLY THIS EXACT SCALING OTHERWISE
-	// YOULL END UP WITH A PIZZA CAKE.
-	friesModelDetails.modelScale = glm::vec3(0.078f, 0.04f, 0.078f);
+	friesModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
 	// add the model details of the fries to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
 	allModels.push_back(friesModelDetails);
 
 	//Now add the rest of the models here...
+
+	//add the hotdog:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	ModelDetails hotdogModelDetails;
+	//load from the appropriate files
+	hotdogModelDetails.content.LoadGLTF("assets/hotdog/hotdog.gltf", "assets/textures/Hotdog.png");
+	//set the initial position/rotation/scale values for the Hotdog model
+	hotdogModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 4.0f);
+	hotdogModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	hotdogModelDetails.modelScale = glm::vec3(0.5f, 0.5f,0.5f);
+	// add the model details of the hotdog to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	allModels.push_back(hotdogModelDetails);
+
+
+	//add the Ketchup Condiment:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	ModelDetails condimentKModelDetails;
+	//load from the appropriate files
+	condimentKModelDetails.content.LoadGLTF("assets/condimentBottles/ketchup_condiment.gltf", "assets/textures/Condiment_Ketchup.png");
+	//set the initial position/rotation/scale values for the Condiment model
+	condimentKModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 6.0f);
+	condimentKModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	condimentKModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	allModels.push_back(condimentKModelDetails);
+
+
+	//add the Mustard Condiment:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	ModelDetails condimentMModelDetails;
+	//load from the appropriate files
+	condimentMModelDetails.content.LoadGLTF("assets/condimentBottles/mustard_condiment.gltf", "assets/textures/Condiment_Mustard.png");
+	//set the initial position/rotation/scale values for the Condiment model
+	condimentMModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 8.0f);
+	condimentMModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	condimentMModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	allModels.push_back(condimentMModelDetails);
+
+	//add the Ice cream:
+	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
+	//ModelDetails iceCreamModelDetails;
+	//load from the appropriate files
+	//iceCreamModelDetails.content.LoadGLTF("assets/icecream/ice_cream.gltf", "assets/textures/IceCream_Plane.png");
+	//set the initial position/rotation/scale values for the Ice cream model
+	//iceCreamModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 10.0f);
+	//iceCreamModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	//iceCreamModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
+	//allModels.push_back(iceCreamModelDetails);
 
 
 
