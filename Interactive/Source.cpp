@@ -37,19 +37,25 @@ using namespace glm;
 #include "src/Pipeline.hpp"		// Setup pipeline and load shaders.
 #include "src/Content.hpp"		// Setup content loader and drawing functions - https://github.com/KhronosGroup/glTF - https://github.com/syoyo/tinygltf 
 #include "src/Debugger.hpp"		// Setup debugger functions.
+#include "src/DynamicModel.hpp" // Setup dynamic model functions.
 
 #define HALF_PI 1.57
 
-struct ModelDetails{
+#define HOTDOG_ID 2
+#define BURGER_ID 3
+#define FRIES_ID 4
+#define KETCHUP_ID 5
+#define MUSTARD_ID 6
+#define ICECREAM_ID 7
+#define PIZZA_ID 8
+#define SPLAT_1_ID 9
+#define SPLAT_2_ID 10
+#define SPLAT_3_ID 11
+#define SPLAT_4_ID 12
+#define SPLAT_5_ID 13
 
-	vec3 modelPosition;
-	vec3 modelRotation;
-	vec3 modelScale;
-	Content content;
 
-};
-
-vector<ModelDetails> allModels;
+vector<DynamicModel*> allModels;
 
 // Main fuctions
 void startup();
@@ -90,10 +96,12 @@ auto windowWidth = 800;								// Window width
 auto windowHeight =800;								// Window height
 auto running(true);							  		// Are we still running our main loop
 mat4 projMatrix;							 		// Our Projection Matrix
-vec3 cameraPosition = vec3(18.1f, 5.1f, 1.8f);		// Where is our camera
-float cameraYaw = -1.6;								// Yaw camera is looking
-float cameraPitch = 0;								// Pitch camera is looking
-vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);			// Camera front vector
+// vec3 cameraPosition = vec3(18.1f, 5.1f, 1.8f);		// Where is our camera
+vec3 cameraPosition = vec3(0.f, 0.f, 0.f);
+// float cameraYaw = -1.6;								// Yaw camera is looking
+float cameraYaw = 0.;
+float cameraPitch = 0.;								// Pitch camera is looking
+vec3 cameraFront = vec3(0.0f, 0.0f, 0.0f);			// Camera front vector
 vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);				// Camera up vector
 auto aspect = (float)windowWidth / (float)windowHeight;	// Window aspect ration
 auto fovy = 45.0f;									// Field of view (y axis)
@@ -251,96 +259,89 @@ void startup()
 
 	//add the burger:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	ModelDetails burgerModelDetails;
-	//load from the appropriate files
-	burgerModelDetails.content.LoadGLTF("assets/burger/burger.gltf", "assets/burger/burger.png");
-	//set the initial position/rotation/scale values for the burger model
-	burgerModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	burgerModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	burgerModelDetails.modelScale = glm::vec3(1.0f, 1.0f, 1.0f);
-	// add the model details of the burger to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(burgerModelDetails);
+	DynamicModel* burger = new DynamicModel(
+		BURGER_ID,
+		vec3(0.0f, 0.0f, -1.0f),  // Position
+		vec3(0.0f, 0.0f, 0.0f),  // Rotation
+		vec3(1.0f, 1.0f, 1.0f),  // Scale
+		"assets/burger/burger.gltf",
+		"assets/burger/burger.png"
+		);
+	allModels.push_back(burger);
 
 	//fries next:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	ModelDetails friesModelDetails;
-	//load from the appropriate files
-	friesModelDetails.content.LoadGLTF("assets/pizza/pizza.gltf", "assets/textures/Pizza.png");
-	//set the initial position/rotation/scale values for the fries model
-	friesModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 2.0f);
-	friesModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	friesModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+	DynamicModel* fries = new DynamicModel(
+		PIZZA_ID,
+		vec3(0.0f, 0.0f, 2.0f),  // Position
+		vec3(0.0f, 0.0f, 0.0f),  // Rotation
+		vec3(1.0f, 1.0f, 1.0f),  // Scale
+		"assets/pizza/pizza.gltf",
+		"assets/textures/Pizza.png"
+	);
+
 	// add the model details of the fries to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(friesModelDetails);
+	allModels.push_back(fries);
 
 	//Now add the rest of the models here...
 	//add the hotdog:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	ModelDetails hotdogModelDetails;
-	//load from the appropriate files
-	hotdogModelDetails.content.LoadGLTF("assets/hotdog/hotdog.gltf", "assets/textures/Hotdog.png");
-	//set the initial position/rotation/scale values for the Hotdog model
-	hotdogModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 4.0f);
-	hotdogModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	hotdogModelDetails.modelScale = glm::vec3(0.5f, 0.5f,0.5f);
+	DynamicModel* hotdog = new DynamicModel(
+		HOTDOG_ID,
+		vec3(0.0f, 0.0f, 4.0f),   // Position
+		vec3(0.0f, 0.0f, 0.0f),   // Rotation
+		vec3(0.5f, 0.5f,0.5f),    // Scale
+		"assets/hotdog/hotdog.gltf",
+		"assets/textures/Hotdog.png"
+	);
 	// add the model details of the hotdog to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(hotdogModelDetails);
+	allModels.push_back(hotdog);
 
 
 	//add the Ketchup Condiment:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	ModelDetails condimentKModelDetails;
-	//load from the appropriate files
-	condimentKModelDetails.content.LoadGLTF("assets/condimentBottles/ketchup_condiment.gltf", "assets/textures/Condiment_Ketchup.png");
-	//set the initial position/rotation/scale values for the Condiment model
-	condimentKModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 6.0f);
-	condimentKModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	condimentKModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+	DynamicModel* ketchup = new DynamicModel(
+		KETCHUP_ID,
+		vec3(0.0f, 0.0f, 6.0f),   // Position
+		vec3(0.0f, 0.0f, 0.0f),   // Rotation
+		vec3(1.0f, 1.0f,1.0f),    // Scale
+		"assets/condimentBottles/ketchup_condiment.gltf",
+		"assets/textures/Condiment_Ketchup.png"
+	);
 	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(condimentKModelDetails);
+	allModels.push_back(ketchup);
 
 
 	//add the Mustard Condiment:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	ModelDetails condimentMModelDetails;
-	//load from the appropriate files
-	condimentMModelDetails.content.LoadGLTF("assets/condimentBottles/mustard_condiment.gltf", "assets/textures/Condiment_Mustard.png");
-	//set the initial position/rotation/scale values for the Condiment model
-	condimentMModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 8.0f);
-	condimentMModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	condimentMModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
+
+	DynamicModel* mustard = new DynamicModel(
+		MUSTARD_ID,
+		vec3(0.0f, 0.0f, 6.0f),   // Position
+		vec3(0.0f, 0.0f, 0.0f),   // Rotation
+		vec3(1.0f, 1.0f,1.0f),    // Scale
+		"assets/condimentBottles/mustard_condiment.gltf",
+		"assets/textures/Condiment_Mustard.png"
+	);
 	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(condimentMModelDetails);
-
-	ModelDetails baseScene;
-
-	baseScene.content.LoadGLTF("assets/base_model-nofood_copy_copy.gltf", "assets/textures/Scene.png");
-	baseScene.modelPosition = glm::vec3(0.0f, 0.0f, 10.0f);
-	baseScene.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	baseScene.modelScale = glm::vec3(1.0f, 1.0f, 1.0f);
+	allModels.push_back(mustard);
+  
+  
+	DynamicModel* baseScene = new DynamicModel(
+		MUSTARD_ID,
+		vec3(0.0f, 0.0f, 100.0f),   // Position
+		vec3(0.0f, 0.0f, 0.0f),   // Rotation
+		vec3(1.0f, 1.0f,1.0f),    // Scale
+		"assets/base_model-nofood_copy_copy.gltf", 
+    "assets/textures/Scene.png"
+	);
+  
+  // WARNING: Base scene is hoverable by player!
+  // Need a patch to prevent it from being hoverable!
 	allModels.push_back(baseScene);
 
 
-	//add the Ice cream:
-	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	//ModelDetails iceCreamModelDetails;
-	//load from the appropriate files
-	//iceCreamModelDetails.content.LoadGLTF("assets/icecream/ice_cream.gltf", "assets/textures/IceCream_Plane.png");
-	//set the initial position/rotation/scale values for the Ice cream model
-	//iceCreamModelDetails.modelPosition = glm::vec3(0.0f, 0.0f, 10.0f);
-	//iceCreamModelDetails.modelRotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	//iceCreamModelDetails.modelScale = glm::vec3(1.0f, 1.0f,1.0f);
-	// add the model details of the ketchup condiment to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	//allModels.push_back(iceCreamModelDetails);
-
-
-
-
-
-
-
-
-
+	//add the Ice cream: (TODO)
 
 	pipeline.CreatePipeline();
 	pipeline.LoadShaders("shaders/vs_model.glsl", "shaders/fs_model.glsl");
@@ -400,6 +401,46 @@ void updateInput() {
 	}
 }
 
+
+
+void updateObjectHover() {
+	// Update static variables so that DynamicModels can access them
+
+	const float PI = 3.1415926535897932384626433832795f;
+    const float H_PI = 1.5707963267948966192313216916398f;
+
+	DynamicModel::cameraX = cameraPosition.x;
+	DynamicModel::cameraY = cameraPosition.y;
+	DynamicModel::cameraZ = cameraPosition.z;
+
+	DynamicModel::cameraYaw = cameraYaw;
+	DynamicModel::cameraPitch = cameraPitch;
+
+	DynamicModel::flatSinDirectionYaw = sin(cameraYaw+H_PI);
+  	DynamicModel::flatCosDirectionYaw = cos(cameraYaw+H_PI);
+
+  	DynamicModel::flatSinDirectionPitch = sin((cameraPitch-PI));
+  	DynamicModel::flatCosDirectionPitch = cos((cameraPitch-PI));
+
+	// Reset these
+	// Make closestval biggest float number
+	DynamicModel::closestVal = FLT_MAX;
+	DynamicModel::closestObject = NULL;
+
+	// Step 1: calculate each of its distances from the player.
+	for (DynamicModel* o : allModels) {
+    	o->calculateCloseness();
+	}
+	// Step 2: check if we're hovering, and if the closest, claim the
+	// spot of the closest object.
+	for (DynamicModel* o : allModels) {
+		o->checkHovering();
+	}
+
+	for (DynamicModel* o : allModels) {
+		if (o->isHovering()) cout << "Closest object: " << o->id << endl;
+	}
+}
 
 
 
@@ -500,6 +541,9 @@ void update()
 		lightFollowsCamera = !lightFollowsCamera;
 		cout << "Teo's Light Follows Camera Mode: " << (lightFollowsCamera?"ON":"OFF") << endl;
 	}
+
+	if (keyStatus[GLFW_KEY_Q]) cameraYaw += 0.05f;
+	if (keyStatus[GLFW_KEY_E]) cameraYaw -= 0.05f;
 	
 	
 	
@@ -509,7 +553,8 @@ void update()
 	// Light source spins around the model.
 		setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);	
 
-	
+	// Objects should be moved/rotated/whatever BEFORE this point.
+	updateObjectHover();
 
 
 	if (keyStatus[GLFW_KEY_LEFT_ALT]) pipeline.ReloadShaders();
@@ -570,23 +615,24 @@ void render()
                                    vec3(0.0, 1.0, 0.0)); // z axis is "up"
 
 
-	for (std::size_t i = 0; i < allModels.size(); ++i) {
-    	ModelDetails modelDetails = allModels[i];
+	int l = allModels.size();
+	for (std::size_t i = 0; i < l; ++i) {
+    	DynamicModel* model = allModels[i];
 		// Do some translations, rotations and scaling
 		// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
 
 		//apply translations
-		glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelDetails.modelPosition.x, modelDetails.modelPosition.y, modelDetails.modelPosition.z));
+		mat4 modelMatrix = glm::translate(glm::mat4(1.0f), model->pos);
 
 		//apply x-axis rotation
-		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, model->rot.x, glm::vec3(1.0f, 0.0f, 0.0f));
 		//apply y-axis rotation
-		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, model->rot.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		//apply z-axis rotation
-		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		modelMatrix = glm::rotate(modelMatrix, model->rot.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
 		//apply x-axis scale:
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(modelDetails.modelScale.x, modelDetails.modelScale.y, modelDetails.modelScale.z));
+		modelMatrix = glm::scale(modelMatrix, model->scl);
 
 		glm::mat4 mv_matrix = viewMatrix * modelMatrix;
 
@@ -594,10 +640,18 @@ void render()
 		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
 
-		glBindTexture(GL_TEXTURE_2D, modelDetails.content.texid);
+		glBindTexture(GL_TEXTURE_2D, model->content.texid);
 
-		modelDetails.content.DrawModel(modelDetails.content.vaoAndEbos, modelDetails.content.model);
+		// Temp code to highlight hovering model.
+		if (model->isHovering()) {
+			// Make the model glow idk.
+			// TODO: put a hover shader here.
+			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+		}
+		else 
+			setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);
 
+		model->content.DrawModel(model->content.vaoAndEbos, model->content.model);
 	}
 	
 	#if defined(__APPLE__)
@@ -670,16 +724,15 @@ void onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mo
 
 void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 {
-	std::cout << "Button Held" << std::endl;
 	if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT)) {
 		if(action == GLFW_PRESS){
 			heldMouseButton = button;
-			std::cout << "Button Held" << std::endl;
+			// std::cout << "Button Held" << std::endl;
 		}
 		else if (action == GLFW_RELEASE) {
 			if(button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT){
 				heldMouseButton = -1;
-				std::cout << "Button Released" << std::endl;
+				// std::cout << "Button Released" << std::endl;
 			}
     	}	
     }
