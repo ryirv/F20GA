@@ -290,7 +290,11 @@ void startup()
 	// A few optimizations.
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
+	
+	// A few disoptimizations (sorry not sorry)
+	// Disabling this as an easy fix to our 3D models
+	// which have some of the normals flipped.
+	glDisable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -415,8 +419,10 @@ void setLightPos(float x, float y, float z) {
 	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "light_direction"), x, y, z);
 }
 
+bool deans000Mode = false;
 bool lightFollowsCamera = false;
 bool murraysCameraMode = true;
+
 
 void update()
 {
@@ -424,8 +430,20 @@ void update()
 
 	delta += 0.05;
 
-	// if (keyPressedOnce(GLFW_KEY_TAB)) lightFollowsCamera = !lightFollowsCamera;
-	if (keyPressedOnce(GLFW_KEY_TAB)) murraysCameraMode = !murraysCameraMode;
+	if (keyPressedOnce(GLFW_KEY_1)) {
+		murraysCameraMode = !murraysCameraMode;
+		cout << "Murray's Camera Mode: " << (murraysCameraMode?"ON":"OFF") << endl;
+	}
+	if (keyPressedOnce(GLFW_KEY_2)) {
+		deans000Mode = !deans000Mode;
+		cout << "Dean's \"look at point 0,0,0\" mode: " << (deans000Mode?"ON":"OFF") << endl;
+	}
+	if (keyPressedOnce(GLFW_KEY_3)) {
+		lightFollowsCamera = !lightFollowsCamera;
+		cout << "Teo's Light Follows Camera Mode: " << (lightFollowsCamera?"ON":"OFF") << endl;
+	}
+	
+	
 	
 	if (lightFollowsCamera)
 		setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -443,6 +461,7 @@ void update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
+
 
 void render()
 {
@@ -465,59 +484,61 @@ void render()
 	glUseProgram(pipeline.pipe.program);
 
 	//I've temporarily commented his camera code out. I just needed it to point to 0,0,0 to make sure that the objects we appearing as they should without fighting with the camera - Dean
-	//float x = cameraPosition.x;
-	//float y = cameraPosition.y;
-	//float z = cameraPosition.z;
-	//float LOOK_DIST = 50.f;
+	// Ive added a mode for disabling it lol. Just press 2 on your keyboard. - Teo
+	vec3 lookAt;
+	if (!deans000Mode) {
+		float x = cameraPosition.x;
+		float y = cameraPosition.y;
+		float z = cameraPosition.z;
+		float LOOK_DIST = 50.f;
+		
+		//THIS WEIRD MATHS EQUASION EXPLAINED:
+		// When we look at a point, this point should be restraint to a sphere around the camera.
+		// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
+		// If we look straight forward (and not up or down), then the point is on the xz-plane.
+		lookAt = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
+	}
+	else {
+		//Start of my temporary camera code just to have the camera looking at the origin for testing purposes (see above ^) - Dean
+		//Point we want to look at (the origin)
+		lookAt = vec3(0.0f, 0.0f, 0.0f);
+	}
+	//
 
-	// THIS WEIRD MATHS EQUASION EXPLAINED:
-	// When we look at a point, this point should be restraint to a sphere around the camera.
-	// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
-	// If we look straight forward (and not up or down), then the point is on the xz-plane.
-	//vec3 lookat = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
 
-	// Setup camera
-	//glm::mat4 viewMatrix = glm::lookAt(cameraPosition,				 // eye
-	//								   lookat, 						 // centre
-	//								   vec3(0., 1., 0.));					 // up
-
-	//Start of my temporary camera code just to have the camera looking at the origin for testing purposes (see above ^) - Dean
-	//Point we want to look at (the origin)
-	vec3 lookAt = vec3(0.0f, 0.0f, 0.0f); 
 	//Setup camera to look at the origin (0,0,0)
 	glm::mat4 viewMatrix = glm::lookAt(cameraPosition, // camera positiion
                                    lookAt,   // point in space that the camera is looking at
                                    vec3(0.0, 1.0, 0.0)); // z axis is "up"
-	//end of my camera test code. Can be deleted when you wan't to put the camera behaviur back to how it was before - Dean
 
 
 	for (std::size_t i = 0; i < allModels.size(); ++i) {
     	ModelDetails modelDetails = allModels[i];
 		// Do some translations, rotations and scaling
-	// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
+		// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
 
-	//apply translations
-	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelDetails.modelPosition.x, modelDetails.modelPosition.y, modelDetails.modelPosition.z));
+		//apply translations
+		glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelDetails.modelPosition.x, modelDetails.modelPosition.y, modelDetails.modelPosition.z));
 
-	//apply x-axis rotation
-	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-	//apply y-axis rotation
-	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-	//apply z-axis rotation
-	modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		//apply x-axis rotation
+		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		//apply y-axis rotation
+		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		//apply z-axis rotation
+		modelMatrix = glm::rotate(modelMatrix, modelDetails.modelRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	//apply x-axis scale:
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(modelDetails.modelScale.x, modelDetails.modelScale.y, modelDetails.modelScale.z));
+		//apply x-axis scale:
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(modelDetails.modelScale.x, modelDetails.modelScale.y, modelDetails.modelScale.z));
 
-	glm::mat4 mv_matrix = viewMatrix * modelMatrix;
+		glm::mat4 mv_matrix = viewMatrix * modelMatrix;
 
-	glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "model_matrix"), 1, GL_FALSE, &modelMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "model_matrix"), 1, GL_FALSE, &modelMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
 
-	glBindTexture(GL_TEXTURE_2D, modelDetails.content.texid);
+		glBindTexture(GL_TEXTURE_2D, modelDetails.content.texid);
 
-	modelDetails.content.DrawModel(modelDetails.content.vaoAndEbos, modelDetails.content.model);
+		modelDetails.content.DrawModel(modelDetails.content.vaoAndEbos, modelDetails.content.model);
 
 	}
 	
