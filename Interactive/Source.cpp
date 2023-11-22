@@ -120,6 +120,8 @@ int heldMouseButton = -1;
 //Code for Displaying Descriptions
 std::string describe;
 bool showDesc = false;
+auto startTime = 0.0f;
+auto resetTime = 0.0f;
 // Clicking on item
 bool clicked = false;
 
@@ -571,6 +573,19 @@ void update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	if(carryingItem!=nullptr){
+		float SELECT_FAR = 1.;
+		//stick infront of player
+		float x = cameraPosition.x+sin(cameraYaw)*SELECT_FAR *cos(cameraPitch);
+		float y = cameraPosition.y+sin(cameraPitch)*SELECT_FAR;
+		float z = cameraPosition.z+cos(cameraYaw)*SELECT_FAR *cos(cameraPitch);
+		carryingItem->setPosition(vec3(x,y,z));
+		if(clicked && (lastTime-startTime>1)){
+			carryingItem = nullptr;
+			resetTime = (float)glfwGetTime();
+			printf("Reseting");
+		}
+	}
 	if(showDesc){
 		ImGui::Begin("Woah! Fun Facts!", &showDesc);
         ImGui::Text("%s",describe.c_str());
@@ -675,14 +690,15 @@ void render()
 		glBindTexture(GL_TEXTURE_2D, model->content.texid);
 
 		// Temp code to highlight hovering model.
-		if (model->isHovering() && clicked) {
-			carryingItem = model; //store a pointer to the model we are hovering over
+		if (model->isHovering() && clicked && (((lastTime-resetTime)>1)||(resetTime==0.0f))) {
+			startTime = (float)glfwGetTime();
+			carryingItem = model;
 			printf("Model Id %d", model->id);
 			updateDesc();
 			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-		}
-		else 
+		} else 
 			setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);
+		
 
 		model->content.DrawModel(model->content.vaoAndEbos, model->content.model);
 	}

@@ -4,7 +4,6 @@
 #define PI 3.1415926f
 #define HALF_PI 1.5707963f
 
-
 DynamicModel::DynamicModel(int i, vec3 p, vec3 r, vec3 s, string filename, string tp) {
     id = i;
     pos = p;
@@ -14,6 +13,9 @@ DynamicModel::DynamicModel(int i, vec3 p, vec3 r, vec3 s, string filename, strin
     testLineLine();
 }
 
+void DynamicModel::setPosition(vec3 newP){
+  pos = newP;
+}
 bool DynamicModel::lineLine(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
   // calculate the direction of the lines
   float uA = ( (x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3) ) / ( (y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1) );

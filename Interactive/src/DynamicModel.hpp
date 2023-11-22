@@ -38,7 +38,7 @@ class DynamicModel
         DynamicModel(int i, vec3 p, vec3 r, vec3 s, string filename, string tp);
         void calculateCloseness();
         void checkHovering();
-        
+        void setPosition(vec3 newPos);
         // NOTE TO ANYONE LOOKING HERE!
         // USE THIS!!!
         // THIS TELLS YOU WHEN THE USER IS OVERING OVER THAT ONE SPECIFIC
