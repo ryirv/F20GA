@@ -574,6 +574,9 @@ void update()
 	if(showDesc){
 		ImGui::Begin("Woah! Fun Facts!", &showDesc);
         ImGui::Text("%s",describe.c_str());
+		if(ImGui::Button("Close Window")){
+			showDesc = false;
+		}
         ImGui::End();
 	}
 }
@@ -675,7 +678,6 @@ void render()
 		if (model->isHovering() && clicked) {
 			carryingItem = model; //store a pointer to the model we are hovering over
 			printf("Model Id %d", model->id);
-			clicked = false;
 			updateDesc();
 			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 		}
@@ -767,10 +769,12 @@ void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 			}
     	}	
     }
-	if ((button == GLFW_MOUSE_BUTTON_LEFT)){
+	if ((button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)){
 		clicked = true;
-		printf("We now clicked button");
+	} else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+		clicked = false;
 	}
+	
 }
 
 void onClickReleased(int button){
