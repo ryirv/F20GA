@@ -353,7 +353,7 @@ void startup()
 	//add the Ice cream: (TODO)
 
 	pipeline.CreatePipeline();
-	pipeline.LoadShaders("shaders/vs_model.glsl", "shaders/fs_model.glsl");
+	pipeline.LoadShaders("shaders/vs_model.glsl","shaders/fs_material.glsl");
 
 	// A few optimizations.
 	glFrontFace(GL_CCW);
@@ -527,6 +527,10 @@ void setLightPos(float x, float y, float z) {
 	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "light_direction"), x, y, z);
 }
 
+void setViewPos(float x, float y, float z) {
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "view_direction"), x, y, z);
+}
+
 bool deans000Mode = false;
 bool lightFollowsCamera = false;
 bool murraysCameraMode = true;
@@ -561,8 +565,18 @@ void update()
 	else
 	// Light source spins around the model.
 		setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);	
-
 	// Objects should be moved/rotated/whatever BEFORE this point.
+
+	//Murrays Material Hackery
+	setViewPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_ambient"), 0.6f, 0.6f, 0.6f);
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_diffuse"), 0.3f, 0.5f, 0.3f);
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_specular"), 0.5f, 0.5f, 0.7f);
+	glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_shininess"), 3.0f);
+	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_lightColor"), 1.0f, 1.0f, 0.6f);
+
+
+
 	updateObjectHover();
 
 
