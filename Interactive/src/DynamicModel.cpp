@@ -125,11 +125,11 @@ void DynamicModel::checkHovering() {
     counter++;
 
     if (yawAlign) {
-      std::cout << "YAW" << counter << std::endl;
+      // std::cout << "YAW" << counter << std::endl;
     }
 
     if (pitchAlign && yawAlign) {
-        std::cout << "HOVER" << counter << std::endl;
+        // std::cout << "HOVER" << counter << std::endl;
       if (closeness < DynamicModel::closestVal) {
         DynamicModel::closestVal = closeness;
         DynamicModel::closestObject = this;

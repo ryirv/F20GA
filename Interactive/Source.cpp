@@ -120,6 +120,8 @@ int heldMouseButton = -1;
 //Code for Displaying Descriptions
 std::string describe;
 bool showDesc = false;
+// Clicking on item
+bool clicked = false;
 
 int main()
 {
@@ -570,7 +572,7 @@ void update()
 	ImGui::NewFrame();
 
 	if(showDesc){
-		ImGui::Begin("Pizza", &showDesc);
+		ImGui::Begin("Woah! Fun Facts!", &showDesc);
         ImGui::Text("%s",describe.c_str());
         ImGui::End();
 	}
@@ -580,7 +582,10 @@ void updateDesc()
 {
 	// https://www.youtube.com/watch?v=q97E8rOFWSU
 	ifstream inputFile;
-	inputFile.open("assets/descriptions/pizza.txt");
+	std::ostringstream oss;
+	oss << "assets/descriptions/" << carryingItem->id << ".txt";
+	std::string fileName = oss.str();
+	inputFile.open(fileName.c_str());
 	stringstream buffer;
 	buffer << inputFile.rdbuf();
 	describe = buffer.str();
@@ -667,10 +672,10 @@ void render()
 		glBindTexture(GL_TEXTURE_2D, model->content.texid);
 
 		// Temp code to highlight hovering model.
-		if (model->isHovering()) {
-
+		if (model->isHovering() && clicked) {
 			carryingItem = model; //store a pointer to the model we are hovering over
-			printf("We're hovering");
+			printf("Model Id %d", model->id);
+			clicked = false;
 			updateDesc();
 			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 		}
@@ -762,6 +767,10 @@ void onMouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 			}
     	}	
     }
+	if ((button == GLFW_MOUSE_BUTTON_LEFT)){
+		clicked = true;
+		printf("We now clicked button");
+	}
 }
 
 void onClickReleased(int button){
