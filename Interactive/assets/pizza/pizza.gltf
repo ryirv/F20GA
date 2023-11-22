@@ -16,11 +16,6 @@
 		{
 			"mesh":0,
 			"name":"Cylinder.003",
-			"scale":[
-				0.0776553675532341,
-				0.004279458895325661,
-				0.0776553675532341
-			],
 			"translation":[
 				0.6665301322937012,
 				0.03298341482877731,
@@ -47,29 +42,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":287394,
+			"count":300287,
 			"max":[
-				5.34794807434082,
-				2.5180952548980713,
-				15.682522773742676
+				0.41529688239097595,
+				0.01077608484774828,
+				1.217832088470459
 			],
 			"min":[
-				-22.645233154296875,
-				-14.864311218261719,
-				-11.958755493164062
+				-1.758523941040039,
+				-0.06361120939254761,
+				-0.9286615252494812
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":287394,
+			"count":300287,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":287394,
+			"count":300287,
 			"type":"VEC2"
 		},
 		{
@@ -82,32 +77,32 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":3448728,
+			"byteLength":3603444,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3448728,
-			"byteOffset":3448728,
+			"byteLength":3603444,
+			"byteOffset":3603444,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2299152,
-			"byteOffset":6897456,
+			"byteLength":2402296,
+			"byteOffset":7206888,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1353936,
-			"byteOffset":9196608,
+			"byteOffset":9609184,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":10550544,
+			"byteLength":10963120,
 			"uri":"pizza.bin"
 		}
 	]
