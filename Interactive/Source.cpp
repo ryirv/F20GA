@@ -111,10 +111,15 @@ auto deltaTime = 0.0f;								// time passed
 auto lastTime = 0.0f;								// Used to calculate Frame rate
 auto xmouse = 0.0;
 auto ymouse = 0.0;
+DynamicModel* carryingItem = nullptr;
 Pipeline pipeline;									// Add one pipeline plus some shaders.
 Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - openGLDebugCallback() ) or manual calls ( Apple - glCheckError() ) 
 
 int heldMouseButton = -1;
+
+//Code for Displaying Descriptions
+std::string describe;
+bool showDesc = false;
 
 int main()
 {
@@ -563,8 +568,27 @@ void update()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
+	if(showDesc){
+		ImGui::Begin("Pizza", &showDesc);
+        ImGui::Text("%s",describe.c_str());
+        ImGui::End();
+	}
 }
 
+void updateDesc()
+{
+	// https://www.youtube.com/watch?v=q97E8rOFWSU
+	ifstream inputFile;
+	inputFile.open("assets/descriptions/pizza.txt");
+	stringstream buffer;
+	buffer << inputFile.rdbuf();
+	describe = buffer.str();
+	cout << describe;
+	inputFile.close();
+	printf("%s",describe);
+	showDesc = true;
+}
 
 void render()
 {
@@ -644,8 +668,10 @@ void render()
 
 		// Temp code to highlight hovering model.
 		if (model->isHovering()) {
-			// Make the model glow idk.
-			// TODO: put a hover shader here.
+
+			carryingItem = model; //store a pointer to the model we are hovering over
+			printf("We're hovering");
+			updateDesc();
 			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 		}
 		else 
