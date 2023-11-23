@@ -3,29 +3,43 @@
 		"generator":"Khronos glTF Blender I/O v3.6.28",
 		"version":"2.0"
 	},
+	"extensionsUsed":[
+		"KHR_materials_specular",
+		"KHR_materials_ior"
+	],
 	"scene":0,
 	"scenes":[
 		{
 			"name":"Scene",
 			"nodes":[
 				0,
-				1
+				1,
+				2
 			]
 		}
 	],
 	"nodes":[
+		{
+			"name":"Ice Cream",
+			"rotation":[
+				0,
+				0.8150325417518616,
+				0,
+				0.5794152021408081
+			],
+			"translation":[
+				0.07235264033079147,
+				1.0895235538482666,
+				0.1418088674545288
+			]
+		},
 		{
 			"name":"Plane",
 			"rotation":[
 				0,
 				0,
 				-0.7071066498756409,
-				0.7071069478988647
-			],
-			"scale":[
-				0.4360964596271515,
-				0.4360964596271515,
-				0.4360964596271515
+				0.70710688829422
 			],
 			"translation":[
 				0,
@@ -49,6 +63,37 @@
 			]
 		}
 	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularColorFactor":[
+						0.06519196285012042,
+						0.06519196285012042,
+						0.06519196285012042
+					]
+				},
+				"KHR_materials_ior":{
+					"ior":1.4500000476837158
+				}
+			},
+			"name":"paper",
+			"normalTexture":{
+				"index":0
+			},
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":1,
+					"texCoord":1
+				},
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":2
+				}
+			}
+		}
+	],
 	"meshes":[
 		{
 			"name":"Cylinder.002",
@@ -58,103 +103,134 @@
 						"POSITION":0,
 						"NORMAL":1,
 						"TEXCOORD_0":2,
-						"TEXCOORD_1":3,
-						"TEXCOORD_2":4
+						"TEXCOORD_1":3
 					},
-					"indices":5
+					"indices":4,
+					"material":0
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":1,
+			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/jpeg",
+			"name":"Paper001_4K-JPG_NormalGL",
+			"uri":"Paper001_4K-JPG_NormalGL.jpg"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"logo",
+			"uri":"logo.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Paper001_4K-JPG_Roughness",
+			"uri":"Paper001_4K-JPG_Roughness.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":2477,
+			"count":832,
 			"max":[
-				1.273492455482483,
-				1.929535150527954,
-				1.2331740856170654
+				1.088439702987671,
+				0.6176968216896057,
+				1.088439702987671
 			],
 			"min":[
 				-1.088439702987671,
 				-0.6091472506523132,
-				-1.2432647943496704
+				-1.088439702987671
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":2477,
+			"count":832,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":2477,
+			"count":832,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":2477,
+			"count":832,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":4,
-			"componentType":5126,
-			"count":2477,
-			"type":"VEC2"
-		},
-		{
-			"bufferView":5,
 			"componentType":5123,
-			"count":10008,
+			"count":1332,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":29724,
+			"byteLength":9984,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":29724,
-			"byteOffset":29724,
+			"byteLength":9984,
+			"byteOffset":9984,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":19816,
-			"byteOffset":59448,
+			"byteLength":6656,
+			"byteOffset":19968,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":19816,
-			"byteOffset":79264,
+			"byteLength":6656,
+			"byteOffset":26624,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":19816,
-			"byteOffset":99080,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":20016,
-			"byteOffset":118896,
+			"byteLength":2664,
+			"byteOffset":33280,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
+		},
+		{
+			"magFilter":9729,
+			"minFilter":9987,
+			"wrapS":33071,
+			"wrapT":33071
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":138912,
+			"byteLength":35944,
 			"uri":"ice_cream.bin"
 		}
 	]

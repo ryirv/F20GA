@@ -55,6 +55,7 @@ using namespace glm;
 #define SPLAT_3_ID 11
 #define SPLAT_4_ID 12
 #define SPLAT_5_ID 13
+#define SCENE_ID 14
 
 
 vector<DynamicModel*> allModels;
@@ -285,9 +286,9 @@ void startup()
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	DynamicModel* burger = new DynamicModel(
 		BURGER_ID,
-		vec3(0.0f, 0.0f, -1.0f),  // Position
+		vec3(4.6f, 0.1f, 100.7f),  // Position
 		vec3(0.0f, 0.0f, 0.0f),  // Rotation
-		vec3(1.0f, 1.0f, 1.0f),  // Scale
+		vec3(0.25f, 0.25f, 0.25f),  // Scale
 		"assets/burger/burger.gltf",
 		"assets/burger/burger.png"
 		);
@@ -297,9 +298,9 @@ void startup()
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	DynamicModel* fries = new DynamicModel(
 		PIZZA_ID,
-		vec3(0.0f, 0.0f, 2.0f),  // Position
+		vec3(-4.8f, 0.1f, 104.6f),  // Position
 		vec3(0.0f, 0.0f, 0.0f),  // Rotation
-		vec3(1.0f, 1.0f, 1.0f),  // Scale
+		vec3(0.3f, 0.3f, 0.3f),  // Scale
 		"assets/pizza/pizza.gltf",
 		"assets/textures/Pizza.png"
 	);
@@ -312,9 +313,9 @@ void startup()
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	DynamicModel* hotdog = new DynamicModel(
 		HOTDOG_ID,
-		vec3(0.0f, 0.0f, 4.0f),   // Position
+		vec3(-3.1f, 0.3f, 98.8f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(0.5f, 0.5f,0.5f),    // Scale
+		vec3(0.2f, 0.2f,0.2f),    // Scale
 		"assets/hotdog/hotdog.gltf",
 		"assets/textures/Hotdog.png"
 	);
@@ -326,9 +327,9 @@ void startup()
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
 	DynamicModel* ketchup = new DynamicModel(
 		KETCHUP_ID,
-		vec3(0.0f, 0.0f, 6.0f),   // Position
+		vec3(4.6f, 0.1f, 96.2f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(1.0f, 1.0f,1.0f),    // Scale
+		vec3(0.1f, 0.1f,0.1f),    // Scale
 		"assets/condimentBottles/ketchup_condiment.gltf",
 		"assets/textures/Condiment_Ketchup.png"
 	);
@@ -341,9 +342,9 @@ void startup()
 
 	DynamicModel* mustard = new DynamicModel(
 		MUSTARD_ID,
-		vec3(0.0f, 0.0f, 6.0f),   // Position
+		vec3(-0.6f, 0.1f, 96.0f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(1.0f, 1.0f,1.0f),    // Scale
+		vec3(0.1f, 0.1f,0.1f),    // Scale
 		"assets/condimentBottles/mustard_condiment.gltf",
 		"assets/textures/Condiment_Mustard.png"
 	);
@@ -352,7 +353,7 @@ void startup()
   
   
 	DynamicModel* baseScene = new DynamicModel(
-		MUSTARD_ID,
+		SCENE_ID,
 		vec3(0.0f, 0.0f, 100.0f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
 		vec3(1.0f, 1.0f,1.0f),    // Scale
