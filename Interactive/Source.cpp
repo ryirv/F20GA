@@ -136,7 +136,7 @@ auto resetTime = 0.0f;
 // Clicking on item
 bool clicked = false;
 bool clickedOnce = false;
-vector<int> read; //Pop up only appears once.
+vector<int> readd; //Pop up only appears once.
 int main()
 {
 	cout << endl << "===" << endl << "3D Graphics and Animation - Running..." << endl;
@@ -296,17 +296,30 @@ void startup()
 
 	//fries next:
 	//create a new wrapper for the model we are adding so we can access the Content object and the model's properties from one place
-	DynamicModel* fries = new DynamicModel(
+	// DynamicModel* fries = new DynamicModel(
+	// 	PIZZA_ID,
+	// 	vec3(-4.8f, 0.1f, 104.6f),  // Position
+	// 	vec3(0.0f, 0.0f, 0.0f),  // Rotation
+	// 	vec3(1.3f, 1.3f, 1.3f),  // Scale
+	// 	"assets/fries/fries.gltf",
+	// 	"assets/textures/Fries.png"
+	// );
+	// allModels.push_back(fries);
+	
+	
+	
+	
+	DynamicModel* pizza = new DynamicModel(
 		PIZZA_ID,
 		vec3(-4.8f, 0.1f, 104.6f),  // Position
 		vec3(0.0f, 0.0f, 0.0f),  // Rotation
-		vec3(0.3f, 0.3f, 0.3f),  // Scale
+		vec3(1.3f, 1.3f, 1.3f),  // Scale
 		"assets/pizza/pizza.gltf",
 		"assets/textures/Pizza.png"
 	);
 
 	// add the model details of the fries to the list of all models in the scene so it can be rendered and so that we can manipulate its scale/position/rotation properties later (in response to user input)
-	allModels.push_back(fries);
+	allModels.push_back(pizza);
 
 	//Now add the rest of the models here...
 	//add the hotdog:
@@ -315,7 +328,7 @@ void startup()
 		HOTDOG_ID,
 		vec3(-3.1f, 0.3f, 98.8f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(0.2f, 0.2f,0.2f),    // Scale
+		vec3(1.2f, 1.2f,1.2f),    // Scale
 		"assets/hotdog/hotdog.gltf",
 		"assets/textures/Hotdog.png"
 	);
@@ -329,7 +342,7 @@ void startup()
 		KETCHUP_ID,
 		vec3(4.6f, 0.1f, 96.2f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(0.1f, 0.1f,0.1f),    // Scale
+		vec3(1.1f, 1.1f,1.1f),    // Scale
 		"assets/condimentBottles/ketchup_condiment.gltf",
 		"assets/textures/Condiment_Ketchup.png"
 	);
@@ -344,7 +357,7 @@ void startup()
 		MUSTARD_ID,
 		vec3(-0.6f, 0.1f, 96.0f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(0.1f, 0.1f,0.1f),    // Scale
+		vec3(1.1f, 1.1f,1.1f),    // Scale
 		"assets/condimentBottles/mustard_condiment.gltf",
 		"assets/textures/Condiment_Mustard.png"
 	);
@@ -565,7 +578,6 @@ void updateTurnCamera(double deltaX,double deltaY) {
 	// go really weird
 	if (cameraPitch > HALF_PI) cameraPitch = HALF_PI;
 	if (cameraPitch < -HALF_PI) cameraPitch = -HALF_PI;
-	
 }
 
 
@@ -631,8 +643,8 @@ void update()
 void updateDesc()
 {
 	bool found = false;
-	for(int i = 0;i<read.size();i++){
-		if (read[i]==carryingItem->id){
+	for(int i = 0;i<readd.size();i++){
+		if (readd[i]==carryingItem->id){
 			found = true;
 			break;
 		} 
@@ -651,7 +663,7 @@ void updateDesc()
 		inputFile.close();
 		printf("%s",describe);
 		showDesc = true;
-		read.push_back(carryingItem->id);
+		readd.push_back(carryingItem->id);
 	}
 }
 
