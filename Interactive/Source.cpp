@@ -39,7 +39,8 @@ using namespace glm;
 #include "src/Debugger.hpp"		// Setup debugger functions.
 #include "src/DynamicModel.hpp" // Setup dynamic model functions.
 
-#define HALF_PI 1.57
+#define HALF_PI 1.57f
+#define BASE_FRAMERATE 60.f
 
 #define HOTDOG_ID 2
 #define BURGER_ID 3
@@ -418,6 +419,18 @@ void updateInput() {
 	}
 }
 
+float delta = 0.f;
+
+float getLiveFPS() {
+	float timeframe = 1.f/BASE_FRAMERATE;
+	return (timeframe/(float)deltaTime)*BASE_FRAMERATE;
+}
+
+void updateDelta() {
+	delta = BASE_FRAMERATE/getLiveFPS();
+	cout << "delta: " << delta << endl;
+	cout << "LiveFPS: " << getLiveFPS() << endl;
+}
 
 
 void updateObjectHover() {
@@ -459,7 +472,7 @@ void updateObjectHover() {
 	//}
 }
 
-
+float accelerate = 0.f;
 
 void updateWalk() {
 	
@@ -474,8 +487,18 @@ void updateWalk() {
 	// NOTE: isWalking not used but could be useful later.
 	bool isWalking = false;
 
+	// NOTE: Delta here corrects the speed if we're experiencing
+	// frame drops.
+
 	// NOTE: same with speed.
-	float speed = 0.1f;
+	float speed = 0.1f*delta;
+
+	if (keyStatus[GLFW_KEY_TAB]) {
+		speed = (0.2f+accelerate)*delta;
+		accelerate += 0.02f;
+		if (accelerate > 1.f) accelerate = 1.f;
+	}
+	else accelerate = 0.f;
 
 	// Forward
 	if (keyStatus[GLFW_KEY_W]) {
@@ -506,8 +529,12 @@ void updateWalk() {
 	}
 
 	// Up and down
-	if (keyStatus[GLFW_KEY_SPACE] || keyStatus[GLFW_KEY_R]) cameraPosition.y += 0.10f;
-	if (keyStatus[GLFW_KEY_LEFT_SHIFT] || keyStatus[GLFW_KEY_LEFT_CONTROL] || keyStatus[GLFW_KEY_F]) cameraPosition.y -= 0.10f;
+	if (keyStatus[GLFW_KEY_SPACE] || keyStatus[GLFW_KEY_R]) cameraPosition.y += speed;
+	if (keyStatus[GLFW_KEY_LEFT_SHIFT] || keyStatus[GLFW_KEY_LEFT_CONTROL] || keyStatus[GLFW_KEY_F]) cameraPosition.y -= speed;
+
+	// Teo's turn controls lol
+	if (keyStatus[GLFW_KEY_Q]) cameraYaw += 0.05f*delta;
+	if (keyStatus[GLFW_KEY_E]) cameraYaw -= 0.05f*delta;
 
 	cameraPosition.x += movex;
 	cameraPosition.z += movez;	
@@ -516,7 +543,7 @@ void updateWalk() {
 void updateTurnCamera(double deltaX,double deltaY) {
 	// Note: later we could possibly change this to the mouse pointer
 	// to control the direction of the camera.
-	float TURN_SPEED = 0.0007f;
+	float TURN_SPEED = 0.0007f*delta;
 
 	// TODO: re-add delta time with accurate equasion.
 	cameraYaw += deltaX * TURN_SPEED;
@@ -525,11 +552,11 @@ void updateTurnCamera(double deltaX,double deltaY) {
 	// go really weird
 	if (cameraPitch > HALF_PI) cameraPitch = HALF_PI;
 	if (cameraPitch < -HALF_PI) cameraPitch = -HALF_PI;
+	
 }
 
 
 
-float delta = 0.0f;
 
 void setLightPos(float x, float y, float z) {
 	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "light_direction"), x, y, z);
@@ -544,12 +571,9 @@ bool murraysCameraMode = true;
 
 void update()
 {
+	updateDelta();
 	updateWalk();
 
-	delta += 0.05;
-
-	if (keyStatus[GLFW_KEY_Q]) cameraYaw += 0.05f;
-	if (keyStatus[GLFW_KEY_E]) cameraYaw -= 0.05f;
 
 	setViewPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
@@ -572,7 +596,7 @@ void update()
 		if(clicked && (lastTime-startTime>1)){
 			carryingItem = nullptr;
 			resetTime = (float)glfwGetTime();
-			printf("Reseting");
+			printf("Resetting");
 		}
 	}
 	if(showDesc){
