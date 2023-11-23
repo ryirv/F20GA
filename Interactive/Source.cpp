@@ -53,6 +53,7 @@ using namespace glm;
 #define SPLAT_3_ID 11
 #define SPLAT_4_ID 12
 #define SPLAT_5_ID 13
+#define SCENE_ID 14
 
 
 vector<DynamicModel*> allModels;
@@ -345,7 +346,7 @@ void startup()
   
   
 	DynamicModel* baseScene = new DynamicModel(
-		MUSTARD_ID,
+		SCENE_ID,
 		vec3(0.0f, 0.0f, 100.0f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
 		vec3(1.0f, 1.0f,1.0f),    // Scale
