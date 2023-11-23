@@ -134,6 +134,7 @@ auto startTime = 0.0f;
 auto resetTime = 0.0f;
 // Clicking on item
 bool clicked = false;
+bool clickedOnce = false;
 vector<int> read; //Pop up only appears once.
 int main()
 {
@@ -411,6 +412,7 @@ void startup()
 
 
 int keyHold[1024];
+int clickHold = 0;
 
 bool keyPressedOnce(int key) {
 	return keyStatus[key] && keyHold[key] == 1;
@@ -422,6 +424,12 @@ void updateInput() {
 			keyHold[i]++;
 		}
 		else keyHold[i] = 0;
+	}
+	if (clicked) {
+		clickHold++;
+	}
+	else {
+		clickHold = 0;
 	}
 }
 
@@ -596,7 +604,14 @@ void update()
 		float x = cameraPosition.x+sin(cameraYaw)*SELECT_FAR *cos(cameraPitch);
 		float y = cameraPosition.y+sin(cameraPitch)*SELECT_FAR;
 		float z = cameraPosition.z+cos(cameraYaw)*SELECT_FAR *cos(cameraPitch);
-		carryingItem->setPosition(vec3(x,y,z));
+
+		float elapsedTime = (float)glfwGetTime()-startTime;
+		int timeInMilliseconds = floor(elapsedTime * 1000.f);
+		carryingItem->setPosition(vec3(x,y+sin(timeInMilliseconds * 0.001f),z));
+
+		// Make the item spIiiiiiIIIIiiiiiIIIIn
+		carryingItem->rot.y += 0.1f*delta;
+
 		// if(heldMouseButton = PICKUP_BUTTON && (lastTime-startTime>1)){
 		// If mouse released plonk down model.
 		if(!clicked){
@@ -729,7 +744,7 @@ void render()
 		glBindTexture(GL_TEXTURE_2D, model->content.texid);
 
 		// Temp code to highlight hovering model.
-		if (model->isHovering() && clicked && carryingItem == nullptr /*&& (((lastTime-resetTime)>1)||(resetTime==0.0f))*/) {
+		if (model->isHovering() && clickHold == 1 && carryingItem == nullptr /*&& (((lastTime-resetTime)>1)||(resetTime==0.0f))*/) {
 			// startTime = (float)glfwGetTime();
 			carryingItem = model;
 			printf("Model Id %d", model->id);
