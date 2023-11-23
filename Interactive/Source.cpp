@@ -115,6 +115,14 @@ DynamicModel* carryingItem = nullptr;
 Pipeline pipeline;									// Add one pipeline plus some shaders.
 Debugger debugger;									// Add one debugger to use for callbacks ( Win64 - openGLDebugCallback() ) or manual calls ( Apple - glCheckError() ) 
 
+float lightX = 1.0f;
+float lightY = 1.0f;
+float lightZ = 1.0f;
+
+float lightR = 1.0f;
+float lightG = -10.0f;
+float lightB = 1.0f;
+
 int heldMouseButton = -1;
 
 //Code for Displaying Descriptions
@@ -124,7 +132,7 @@ auto startTime = 0.0f;
 auto resetTime = 0.0f;
 // Clicking on item
 bool clicked = false;
-
+vector<int> read; //Pop up only appears once.
 int main()
 {
 	cout << endl << "===" << endl << "3D Graphics and Animation - Running..." << endl;
@@ -446,9 +454,9 @@ void updateObjectHover() {
 		o->checkHovering();
 	}
 
-	for (DynamicModel* o : allModels) {
-		if (o->isHovering()) cout << "Closest object: " << o->id << endl;
-	}
+	//for (DynamicModel* o : allModels) {
+		//if (o->isHovering()) ;
+	//}
 }
 
 
@@ -531,8 +539,6 @@ void setViewPos(float x, float y, float z) {
 	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "view_direction"), x, y, z);
 }
 
-bool deans000Mode = false;
-bool lightFollowsCamera = false;
 bool murraysCameraMode = true;
 
 
@@ -542,43 +548,12 @@ void update()
 
 	delta += 0.05;
 
-	if (keyPressedOnce(GLFW_KEY_1)) {
-		murraysCameraMode = !murraysCameraMode;
-		cout << "Murray's Camera Mode: " << (murraysCameraMode?"ON":"OFF") << endl;
-	}
-	if (keyPressedOnce(GLFW_KEY_2)) {
-		deans000Mode = !deans000Mode;
-		cout << "Dean's \"look at point 0,0,0\" mode: " << (deans000Mode?"ON":"OFF") << endl;
-	}
-	if (keyPressedOnce(GLFW_KEY_3)) {
-		lightFollowsCamera = !lightFollowsCamera;
-		cout << "Teo's Light Follows Camera Mode: " << (lightFollowsCamera?"ON":"OFF") << endl;
-	}
-
 	if (keyStatus[GLFW_KEY_Q]) cameraYaw += 0.05f;
 	if (keyStatus[GLFW_KEY_E]) cameraYaw -= 0.05f;
-	
-	
-	
-	if (lightFollowsCamera)
-		setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	else
-	// Light source spins around the model.
-		setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);	
-	// Objects should be moved/rotated/whatever BEFORE this point.
 
-	//Murrays Material Hackery
 	setViewPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_ambient"), 0.6f, 0.6f, 0.6f);
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_diffuse"), 0.3f, 0.5f, 0.3f);
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_specular"), 0.5f, 0.5f, 0.7f);
-	glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_shininess"), 3.0f);
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_lightColor"), 1.0f, 1.0f, 0.6f);
-
-
-
+	
 	updateObjectHover();
-
 
 	if (keyStatus[GLFW_KEY_LEFT_ALT]) pipeline.ReloadShaders();
 
@@ -588,7 +563,7 @@ void update()
 	ImGui::NewFrame();
 
 	if(carryingItem!=nullptr){
-		float SELECT_FAR = 1.;
+		float SELECT_FAR = 5.0;
 		//stick infront of player
 		float x = cameraPosition.x+sin(cameraYaw)*SELECT_FAR *cos(cameraPitch);
 		float y = cameraPosition.y+sin(cameraPitch)*SELECT_FAR;
@@ -603,28 +578,35 @@ void update()
 	if(showDesc){
 		ImGui::Begin("Woah! Fun Facts!", &showDesc);
         ImGui::Text("%s",describe.c_str());
-		if(ImGui::Button("Close Window")){
-			showDesc = false;
-		}
         ImGui::End();
 	}
 }
 
 void updateDesc()
 {
+	bool found = false;
+	for(int i = 0;i<read.size();i++){
+		if (read[i]==carryingItem->id){
+			found = true;
+			break;
+		} 
+	}
+	if(!found){
 	// https://www.youtube.com/watch?v=q97E8rOFWSU
-	ifstream inputFile;
-	std::ostringstream oss;
-	oss << "assets/descriptions/" << carryingItem->id << ".txt";
-	std::string fileName = oss.str();
-	inputFile.open(fileName.c_str());
-	stringstream buffer;
-	buffer << inputFile.rdbuf();
-	describe = buffer.str();
-	cout << describe;
-	inputFile.close();
-	printf("%s",describe);
-	showDesc = true;
+		ifstream inputFile;
+		std::ostringstream oss;
+		oss << "assets/descriptions/" << carryingItem->id << ".txt";
+		std::string fileName = oss.str();
+		inputFile.open(fileName.c_str());
+		stringstream buffer;
+		buffer << inputFile.rdbuf();
+		describe = buffer.str();
+		cout << describe;
+		inputFile.close();
+		printf("%s",describe);
+		showDesc = true;
+		read.push_back(carryingItem->id);
+	}
 }
 
 void render()
@@ -650,24 +632,17 @@ void render()
 	//I've temporarily commented his camera code out. I just needed it to point to 0,0,0 to make sure that the objects we appearing as they should without fighting with the camera - Dean
 	// Ive added a mode for disabling it lol. Just press 2 on your keyboard. - Teo
 	vec3 lookAt;
-	if (!deans000Mode) {
-		float x = cameraPosition.x;
-		float y = cameraPosition.y;
-		float z = cameraPosition.z;
-		float LOOK_DIST = 50.f;
+	float x = cameraPosition.x;
+	float y = cameraPosition.y;
+	float z = cameraPosition.z;
+	float LOOK_DIST = 50.f;
 		
-		//THIS WEIRD MATHS EQUASION EXPLAINED:
-		// When we look at a point, this point should be restraint to a sphere around the camera.
-		// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
-		// If we look straight forward (and not up or down), then the point is on the xz-plane.
-		lookAt = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
-	}
-	else {
-		//Start of my temporary camera code just to have the camera looking at the origin for testing purposes (see above ^) - Dean
-		//Point we want to look at (the origin)
-		lookAt = vec3(0.0f, 0.0f, 0.0f);
-	}
-	//
+	//THIS WEIRD MATHS EQUASION EXPLAINED:
+	// When we look at a point, this point should be restraint to a sphere around the camera.
+	// The closer we look up/down, the closer to the centre of the y-axis the point should be. (cos(cameraYaw))
+	// If we look straight forward (and not up or down), then the point is on the xz-plane.
+	lookAt = vec3(x+sin(cameraYaw)*LOOK_DIST*cos(cameraPitch), y+sin(cameraPitch)*LOOK_DIST, z+cos(cameraYaw)*LOOK_DIST*cos(cameraPitch));
+	
 
 
 	//Setup camera to look at the origin (0,0,0)
@@ -709,11 +684,24 @@ void render()
 			carryingItem = model;
 			printf("Model Id %d", model->id);
 			updateDesc();
-			setLightPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-		} else 
-			setLightPos(cos(delta)*10.f, 0.0f, sin(delta)*10.f);
-		
+		}
 
+		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_ambient"), 0.7f, 0.7f, 0.7f);
+		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_diffuse"), 0.7f, 0.7f, 0.7f);
+		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_specular"), 0.1f, 0.1f, 0.1f);
+		glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_shininess"), 2.0f);
+		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_lightColor"), 1.0f, 1.0f, 1.0f);
+		if(carryingItem!=nullptr && carryingItem == model){
+			
+			float elapsedTime = (float)glfwGetTime()-startTime;
+			int timeInMilliseconds = std::floor(elapsedTime * 1000);
+      		float flashIntensity = std::sin(timeInMilliseconds * 0.002f) * 0.3f + 0.5f;
+			cout << "flash intensity: " << flashIntensity << endl;
+			glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_flashIntesity"), flashIntensity);
+		}else{
+			glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_flashIntesity"), 0.0f);
+		}
+		
 		model->content.DrawModel(model->content.vaoAndEbos, model->content.model);
 	}
 	
