@@ -133,7 +133,7 @@ auto startTime = 0.0f;
 auto resetTime = 0.0f;
 // Clicking on item
 bool clicked = false;
-
+vector<int> read; //Pop up only appears once.
 int main()
 {
 	cout << endl << "===" << endl << "3D Graphics and Animation - Running..." << endl;
@@ -602,28 +602,35 @@ void update()
 	if(showDesc){
 		ImGui::Begin("Woah! Fun Facts!", &showDesc);
         ImGui::Text("%s",describe.c_str());
-		if(ImGui::Button("Close Window")){
-			showDesc = false;
-		}
         ImGui::End();
 	}
 }
 
 void updateDesc()
 {
+	bool found = false;
+	for(int i = 0;i<read.size();i++){
+		if (read[i]==carryingItem->id){
+			found = true;
+			break;
+		} 
+	}
+	if(!found){
 	// https://www.youtube.com/watch?v=q97E8rOFWSU
-	ifstream inputFile;
-	std::ostringstream oss;
-	oss << "assets/descriptions/" << carryingItem->id << ".txt";
-	std::string fileName = oss.str();
-	inputFile.open(fileName.c_str());
-	stringstream buffer;
-	buffer << inputFile.rdbuf();
-	describe = buffer.str();
-	cout << describe;
-	inputFile.close();
-	printf("%s",describe);
-	showDesc = true;
+		ifstream inputFile;
+		std::ostringstream oss;
+		oss << "assets/descriptions/" << carryingItem->id << ".txt";
+		std::string fileName = oss.str();
+		inputFile.open(fileName.c_str());
+		stringstream buffer;
+		buffer << inputFile.rdbuf();
+		describe = buffer.str();
+		cout << describe;
+		inputFile.close();
+		printf("%s",describe);
+		showDesc = true;
+		read.push_back(carryingItem->id);
+	}
 }
 
 void render()
