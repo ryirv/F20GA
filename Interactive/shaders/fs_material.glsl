@@ -22,37 +22,44 @@ uniform vec3 in_specular;
 uniform float in_shininess;
 uniform vec3 in_lightColor;
 
+uniform float in_flashIntesity;
+
 
 void main(void)
 {
-  //color = vec4(1.0,1.0,1.0,1.0);
-  //color = vec4(fs_in.normals, 1.0);
-
   vec3 normal = fs_in.normals;
 
   // Dot product
   float dp = (normal.x * light_direction.x + normal.y * light_direction.y + normal.z * light_direction.z);
 
-    float c = ((dp + 1.) / 2.)*0.10+0.90;
+  float c = ((dp + 1.) / 2.)*0.10+0.90;   
 
-    //color = texture(tex, fs_in.tc)*vec4(c,c,c, 1.0);
-     
+  // based on https://learnopengl.com/Lighting/Materials
+  // materials
 
-     // based on https://learnopengl.com/Lighting/Materials
-    // materials
-    // ambient
-    vec3 ambient = in_lightColor * in_ambient;
+  // ambient
+  vec3 ambient = in_lightColor * in_ambient;
   	
-    // diffuse 
-    vec3 norm = normalize(normal);
-    float diff = max(dot(norm, light_direction), 0.0);
-    vec3 diffuse = in_lightColor * (diff * in_diffuse);
+  // diffuse 
+  vec3 norm = normalize(normal);
+  float diff = max(dot(norm, light_direction), 0.0);
+  vec3 diffuse = in_lightColor * (diff * in_diffuse);
     
-    // specular
-    vec3 reflectDir = reflect(-light_direction, norm);  
-    float spec = pow(max(dot(view_direction, reflectDir), 0.0), in_shininess);
-    vec3 specular = in_lightColor * (spec * in_specular);  
+  // specular
+  vec3 reflectDir = reflect(-light_direction, norm);  
+  float spec = pow(max(dot(view_direction, reflectDir), 0.0), in_shininess);
+  vec3 specular = in_lightColor * (spec * in_specular);  
         
-    vec3 result = ambient + diffuse + specular;
-    color = texture(tex, fs_in.tc) * vec4(result, 1.0);
+  vec3 result = ambient + diffuse + specular;
+
+  vec3 flashIntesity = vec3(in_flashIntesity, in_flashIntesity, in_flashIntesity);
+  if(in_flashIntesity > 0){
+
+      color = texture(tex, fs_in.tc) * 1.0 * vec4((result*flashIntesity), 1.0);
+
+  }else{
+      color = texture(tex, fs_in.tc) * 1.0 * vec4(result, 1.0);
+  }
+
+    
 }
