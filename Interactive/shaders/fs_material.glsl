@@ -29,11 +29,6 @@ void main(void)
 {
   vec3 normal = fs_in.normals;
 
-  // Dot product
-  float dp = (normal.x * light_direction.x + normal.y * light_direction.y + normal.z * light_direction.z);
-
-  float c = ((dp + 1.) / 2.)*0.10+0.90;   
-
   // based on https://learnopengl.com/Lighting/Materials
   // materials
 

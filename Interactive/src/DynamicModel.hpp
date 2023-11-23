@@ -32,8 +32,8 @@ class DynamicModel
         inline static DynamicModel* closestObject;
         
         // Just make em constants for now
-        float wi = 1.;
-        float hi = 1.;
+        float wi = 2.5;
+        float hi = 2.5;
 
         DynamicModel(int i, vec3 p, vec3 r, vec3 s, string filename, string tp);
         void calculateCloseness();
