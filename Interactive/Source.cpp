@@ -288,7 +288,7 @@ void startup()
 		BURGER_ID,
 		vec3(4.6f, 0.1f, 100.7f),  // Position
 		vec3(0.0f, 0.0f, 0.0f),  // Rotation
-		vec3(0.25f, 0.25f, 0.25f),  // Scale
+		vec3(0.5f, 0.5f, 0.5f),  // Scale
 		"assets/burger/burger.gltf",
 		"assets/burger/burger.png"
 		);
@@ -313,7 +313,7 @@ void startup()
 		PIZZA_ID,
 		vec3(-4.8f, 0.1f, 104.6f),  // Position
 		vec3(0.0f, 0.0f, 0.0f),  // Rotation
-		vec3(1.3f, 1.3f, 1.3f),  // Scale
+		vec3(0.7f, 0.7f, 0.7f),  // Scale
 		"assets/pizza/pizza.gltf",
 		"assets/textures/Pizza.png"
 	);
@@ -328,7 +328,7 @@ void startup()
 		HOTDOG_ID,
 		vec3(-3.1f, 0.3f, 98.8f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(1.2f, 1.2f,1.2f),    // Scale
+		vec3(0.35f, 0.35f,0.35f),    // Scale
 		"assets/hotdog/hotdog.gltf",
 		"assets/textures/Hotdog.png"
 	);
@@ -342,7 +342,7 @@ void startup()
 		KETCHUP_ID,
 		vec3(4.6f, 0.1f, 96.2f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(1.1f, 1.1f,1.1f),    // Scale
+		vec3(0.3f, 0.3f,0.3f),    // Scale
 		"assets/condimentBottles/ketchup_condiment.gltf",
 		"assets/textures/Condiment_Ketchup.png"
 	);
@@ -357,7 +357,7 @@ void startup()
 		MUSTARD_ID,
 		vec3(-0.6f, 0.1f, 96.0f),   // Position
 		vec3(0.0f, 0.0f, 0.0f),   // Rotation
-		vec3(1.1f, 1.1f,1.1f),    // Scale
+		vec3(0.3f, 0.3f,0.3f),    // Scale
 		"assets/condimentBottles/mustard_condiment.gltf",
 		"assets/textures/Condiment_Mustard.png"
 	);
