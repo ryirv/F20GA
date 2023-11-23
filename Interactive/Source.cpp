@@ -747,9 +747,12 @@ void render()
 		// Temp code to highlight hovering model.
 		if (model->isHovering() && clickHold == 1 && carryingItem == nullptr /*&& (((lastTime-resetTime)>1)||(resetTime==0.0f))*/) {
 			// startTime = (float)glfwGetTime();
-			carryingItem = model;
-			printf("Model Id %d", model->id);
-			updateDesc();
+			if(model->id != SCENE_ID)
+			{
+				carryingItem = model;
+				printf("Model Id %d", model->id);
+				updateDesc();
+			}
 		}
 
 		if (usingmaterialbasics) {
