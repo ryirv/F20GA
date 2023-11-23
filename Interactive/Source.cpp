@@ -41,6 +41,7 @@ using namespace glm;
 
 #define HALF_PI 1.57f
 #define BASE_FRAMERATE 60.f
+#define PICKUP_BUTTON GLFW_MOUSE_BUTTON_RIGHT 
 
 #define HOTDOG_ID 2
 #define BURGER_ID 3
@@ -266,6 +267,10 @@ void endProgram()
 	glfwTerminate();				// destroys all windows and releases resources.
 }
 
+Pipe materialBasics;
+Pipe spinningLight;
+Pipe hoverShader;
+
 void startup()
 {
 	// Output some debugging information
@@ -359,10 +364,11 @@ void startup()
 	allModels.push_back(baseScene);
 
 
-	//add the Ice cream: (TODO)
-
-	pipeline.CreatePipeline();
-	pipeline.LoadShaders("shaders/vs_model.glsl","shaders/fs_material.glsl");
+	// Load our shaders
+	materialBasics = pipeline.LoadShaders("shaders/vs_model.glsl","shaders/fs_material.glsl");
+	spinningLight = pipeline.LoadShaders("shaders/vs_model.glsl","shaders/fs_lights.glsl");
+	hoverShader = pipeline.LoadShaders("shaders/vs_model.glsl","shaders/fs_hover.glsl");
+	pipeline.UsePipe(&materialBasics);
 
 	// A few optimizations.
 	glFrontFace(GL_CCW);
@@ -428,8 +434,6 @@ float getLiveFPS() {
 
 void updateDelta() {
 	delta = BASE_FRAMERATE/getLiveFPS();
-	cout << "delta: " << delta << endl;
-	cout << "LiveFPS: " << getLiveFPS() << endl;
 }
 
 
@@ -559,11 +563,11 @@ void updateTurnCamera(double deltaX,double deltaY) {
 
 
 void setLightPos(float x, float y, float z) {
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "light_direction"), x, y, z);
+	glUniform3f(glGetUniformLocation(spinningLight.program, "light_direction"), x, y, z);
 }
 
 void setViewPos(float x, float y, float z) {
-	glUniform3f(glGetUniformLocation(pipeline.pipe.program, "view_direction"), x, y, z);
+	glUniform3f(glGetUniformLocation(spinningLight.program, "view_direction"), x, y, z);
 }
 
 bool murraysCameraMode = true;
@@ -593,9 +597,11 @@ void update()
 		float y = cameraPosition.y+sin(cameraPitch)*SELECT_FAR;
 		float z = cameraPosition.z+cos(cameraYaw)*SELECT_FAR *cos(cameraPitch);
 		carryingItem->setPosition(vec3(x,y,z));
-		if(clicked && (lastTime-startTime>1)){
+		// if(heldMouseButton = PICKUP_BUTTON && (lastTime-startTime>1)){
+		// If mouse released plonk down model.
+		if(!clicked){
 			carryingItem = nullptr;
-			resetTime = (float)glfwGetTime();
+			// resetTime = (float)glfwGetTime();
 			printf("Resetting");
 		}
 	}
@@ -650,9 +656,6 @@ void render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// Use our shader programs
-	glUseProgram(pipeline.pipe.program);
-
 	//I've temporarily commented his camera code out. I just needed it to point to 0,0,0 to make sure that the objects we appearing as they should without fighting with the camera - Dean
 	// Ive added a mode for disabling it lol. Just press 2 on your keyboard. - Teo
 	vec3 lookAt;
@@ -674,12 +677,35 @@ void render()
                                    lookAt,   // point in space that the camera is looking at
                                    vec3(0.0, 1.0, 0.0)); // z axis is "up"
 
-
 	int l = allModels.size();
 	for (std::size_t i = 0; i < l; ++i) {
     	DynamicModel* model = allModels[i];
 		// Do some translations, rotations and scaling
 		// glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(modelPosition.x+rX, modelPosition.y+rY, modelPosition.z+rZ));
+
+		// I fully acknowledge that this isn't the most efficient approach.
+		// However, we don't have much time;.
+		bool usingmaterialbasics = false;
+		if (model->isHovering()) {
+			// If we're hovering, then we want to render the model with a different shader.
+			pipeline.UsePipe(&hoverShader);
+			glUniform1f(glGetUniformLocation(hoverShader.program, "u_time"), (float)glfwGetTime());
+		}
+		else if (carryingItem!=nullptr && carryingItem == model){
+			pipeline.UsePipe(&materialBasics);
+			float elapsedTime = (float)glfwGetTime()-startTime;
+			int timeInMilliseconds = std::floor(elapsedTime * 1000);
+      		float flashIntensity = std::sin(timeInMilliseconds * 0.002f) * 0.3f + 0.5f;
+			cout << "flash intensity: " << flashIntensity << endl;
+			glUniform1f(glGetUniformLocation(materialBasics.program, "in_flashIntesity"), flashIntensity);
+			usingmaterialbasics = true;
+		}
+		else {
+			// Otherwise, we want to render the model with the default shader.
+			pipeline.UsePipe(&materialBasics);
+			glUniform1f(glGetUniformLocation(materialBasics.program, "in_flashIntesity"), 0.f);
+			usingmaterialbasics = true;
+		}
 
 		//apply translations
 		mat4 modelMatrix = glm::translate(glm::mat4(1.0f), model->pos);
@@ -696,35 +722,28 @@ void render()
 
 		glm::mat4 mv_matrix = viewMatrix * modelMatrix;
 
-		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "model_matrix"), 1, GL_FALSE, &modelMatrix[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(pipeline.pipe.program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.currentPipe->program, "model_matrix"), 1, GL_FALSE, &modelMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.currentPipe->program, "view_matrix"), 1, GL_FALSE, &viewMatrix[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(pipeline.currentPipe->program, "proj_matrix"), 1, GL_FALSE, &projMatrix[0][0]);
 
 		glBindTexture(GL_TEXTURE_2D, model->content.texid);
 
 		// Temp code to highlight hovering model.
-		if (model->isHovering() && clicked && (((lastTime-resetTime)>1)||(resetTime==0.0f))) {
-			startTime = (float)glfwGetTime();
+		if (model->isHovering() && clicked && carryingItem == nullptr /*&& (((lastTime-resetTime)>1)||(resetTime==0.0f))*/) {
+			// startTime = (float)glfwGetTime();
 			carryingItem = model;
 			printf("Model Id %d", model->id);
 			updateDesc();
 		}
 
-		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_ambient"), 0.7f, 0.7f, 0.7f);
-		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_diffuse"), 0.7f, 0.7f, 0.7f);
-		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_specular"), 0.1f, 0.1f, 0.1f);
-		glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_shininess"), 2.0f);
-		glUniform3f(glGetUniformLocation(pipeline.pipe.program, "in_lightColor"), 1.0f, 1.0f, 1.0f);
-		if(carryingItem!=nullptr && carryingItem == model){
-			
-			float elapsedTime = (float)glfwGetTime()-startTime;
-			int timeInMilliseconds = std::floor(elapsedTime * 1000);
-      		float flashIntensity = std::sin(timeInMilliseconds * 0.002f) * 0.3f + 0.5f;
-			cout << "flash intensity: " << flashIntensity << endl;
-			glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_flashIntesity"), flashIntensity);
-		}else{
-			glUniform1f(glGetUniformLocation(pipeline.pipe.program, "in_flashIntesity"), 0.0f);
+		if (usingmaterialbasics) {
+			glUniform3f(glGetUniformLocation(materialBasics.program, "in_ambient"), 0.7f, 0.7f, 0.7f);
+			glUniform3f(glGetUniformLocation(materialBasics.program, "in_diffuse"), 0.7f, 0.7f, 0.7f);
+			glUniform3f(glGetUniformLocation(materialBasics.program, "in_specular"), 0.1f, 0.1f, 0.1f);
+			glUniform1f(glGetUniformLocation(materialBasics.program, "in_shininess"), 2.0f);
+			glUniform3f(glGetUniformLocation(materialBasics.program, "in_lightColor"), 1.0f, 1.0f, 1.0f);
 		}
+		
 		
 		model->content.DrawModel(model->content.vaoAndEbos, model->content.model);
 	}

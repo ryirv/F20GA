@@ -29,18 +29,22 @@ using namespace std;
 class Pipeline{
 	public:
 		Pipeline();
-	
-		Pipe pipe;											// Save all information.
+		Pipe* currentPipe;
 
-		void CreatePipeline();								// Create OpenGL Pipeline Program
-		void LoadShaders(string vs, string fs);				// Load shaders using files		
+		// Modification made: the pipeline can have several pipes!
+		vector<Pipe*> pipes;											// Save all information.
+
+		void UsePipe(Pipe* pipe);
+		// Returns a new pipe.
+		// Optional argument creates a new pipe struct
+		Pipe LoadShaders(string vs, string fs, Pipe pipe = Pipe());				// Load shaders using files		
 		void ReloadShaders();								// Reload Shaders for debugging...			
 
 		virtual ~Pipeline();
 	protected:
 
 	private:
-		string ReadShader(string name);
-		void CheckErrorShader(GLuint shader, string name);
-		void CheckErrorLinking();
+		string ReadShader(string name, Pipe* pipe);
+		void CheckErrorShader(GLuint shader, string name, Pipe* pipe);
+		void CheckErrorLinking(Pipe* pipe);
 };

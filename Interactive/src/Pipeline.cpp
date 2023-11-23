@@ -7,43 +7,57 @@ Pipeline::Pipeline() {
 
 }
 
-void Pipeline::CreatePipeline(){
-
-	cout << endl << "Creating new pipeline..." << endl;
-
+Pipe Pipeline::LoadShaders(string vsString, string fsString, Pipe pipe){
 	pipe.program = glCreateProgram();
-}
-
-void Pipeline::LoadShaders(string vsString, string fsString){
 	pipe.vsName = vsString; pipe.fsName = fsString; 		// save filenames for reloading of shaders
 
-	string vsText = ReadShader(vsString);
+	string vsText = ReadShader(vsString, &pipe);
 	auto vs_source = vsText.c_str();
 	auto vs = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vs, 1, &vs_source, NULL);
 	glCompileShader(vs);
-	CheckErrorShader(vs, vsString);
+	CheckErrorShader(vs, vsString, &pipe);
 	glAttachShader(pipe.program, vs);
 
-	string fsText = ReadShader(fsString);
+	string fsText = ReadShader(fsString, &pipe);
 	auto fs_source = fsText.c_str();
 	auto fs = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fs, 1, &fs_source, NULL);
 	glCompileShader(fs);
-	CheckErrorShader(fs, fsString);
+	CheckErrorShader(fs, fsString, &pipe);
 	glAttachShader(pipe.program, fs);
 
 	glLinkProgram(pipe.program);
-	CheckErrorLinking();
+	CheckErrorLinking(&pipe);
 
-	glUseProgram(pipe.program);
+	if (!pipe.error) {
+		cout << "OK - Pipeline compiled.\n";
+	} else {
+		cout << "ERROR - Pipeline did not compile, please check for errors!\n";
+	}
 
-	if(!pipe.error) cout << "OK - Pipeline compiled.\n"; 
-	else cout << "ERROR - Pipeline did not compile, please check for errors!\n" ;
+	// Check that fsName or vsName doesn't exist in pipes and if not, add it.
+	bool found = false;
+	for (auto p : pipes) {
+		if (p->fsName == fsString && p->vsName == vsString) {
+			found = true;
+			break;
+		}
+	}
+	if (!found) {
+		pipes.push_back(new Pipe(pipe));
+	}
+
+	return pipe;
+}
+
+void Pipeline::UsePipe(Pipe* pipe){
+	glUseProgram(pipe->program);
+	currentPipe = pipe;
 }
 
 
-string Pipeline::ReadShader(string name){
+string Pipeline::ReadShader(string name, Pipe* pipe){
 	auto shaderText = ""s;
 	std::ifstream shaderFile(name);
 
@@ -60,12 +74,12 @@ string Pipeline::ReadShader(string name){
 	}
 	else{
 		cout << "ERROR - Unable to open shader file: " << name << "\n";
-		pipe.error = true;
+		pipe->error = true;
 	}
 	return shaderText;
 }
 
-void Pipeline::CheckErrorShader(GLuint shader, string name){
+void Pipeline::CheckErrorShader(GLuint shader, string name, Pipe* pipe){
 	// Get log lenght
 	GLint maxLength = 0;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
@@ -79,20 +93,20 @@ void Pipeline::CheckErrorShader(GLuint shader, string name){
 
 		cout << "ERROR - Shader compilation error: " << errorLog.data() << "\n";
 
-		pipe.error = true;
+		pipe->error = true;
 	}
 	else{
 		cout << "OK - Compiled Shader: " << name << "\n"; 
 	}
 }
 
-void Pipeline::CheckErrorLinking(){
+void Pipeline::CheckErrorLinking(Pipe* pipe){
 	GLint isLinked = 0;
-	glGetProgramiv(pipe.program, GL_LINK_STATUS, &isLinked);
+	glGetProgramiv(pipe->program, GL_LINK_STATUS, &isLinked);
 	
 	if (isLinked == GL_FALSE) {
 		GLint maxLength = 0;
-		glGetProgramiv(pipe.program, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(pipe->program, GL_INFO_LOG_LENGTH, &maxLength);
 
 		// Init a string for it
 		vector<GLchar> errorLog(maxLength);
@@ -100,11 +114,11 @@ void Pipeline::CheckErrorLinking(){
 		// The maxLength includes the NULL character
 		if (maxLength > 1){
 
-			glGetProgramInfoLog(pipe.program, maxLength, &maxLength, &errorLog[0]);
+			glGetProgramInfoLog(pipe->program, maxLength, &maxLength, &errorLog[0]);
 
 			cout << "ERROR - Shaders linking error: " << errorLog.data() << "\n";
 
-			pipe.error = true;
+			pipe->error = true;
 		}
 	}
 
@@ -114,10 +128,12 @@ void Pipeline::CheckErrorLinking(){
 
 void Pipeline::ReloadShaders(){
 	cout << "Hot-Reloading pipeline...\n";
-	glDeleteProgram(pipe.program);
-	pipe.error = false;
-	pipe.program = glCreateProgram();
-	LoadShaders(pipe.vsName, pipe.fsName);
+	vector<string> vsNames;
+	vector<string> fsNames;
+	for (auto pipe : pipes){
+		glDeleteProgram(pipe->program);
+		LoadShaders(pipe->vsName, pipe->fsName, *pipe);
+	}
 }
 
 
